@@ -74,31 +74,7 @@ public class Splash extends AppCompatActivity {
             startActivity(new Intent(Splash.this, MapsActivity.class));
 
         }
-     /*  UsersInterface UsersInterface = ApiClient.getApiClient().create(UsersInterface.class);
-        Call<List<User>> call = UsersInterface.getUsers();
-        call.enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
 
-                for(int i=0; i< response.body().size();i++){
-                    Log.d(TAG,response.body().get(i).getUId());
-                    Log.d(TAG,response.body().get(i).getName());
-                    Log.d(TAG,response.body().get(i).getEmail());
-                    Log.d(TAG,response.body().get(i).getProfileUrl());
-                    Log.d(TAG,response.body().get(i).getCoverUrl());
-                    Log.d(TAG,response.body().get(i).getUserToken());
-                    Log.d(TAG,"END");
-
-                }
-                Log.d(TAG,"Successessss nm");
-            }
-
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                Log.d(TAG,"failure nn: "+t.getMessage());
-
-            }
-        });*/
 
 
 
