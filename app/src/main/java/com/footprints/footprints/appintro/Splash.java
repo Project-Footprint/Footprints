@@ -126,17 +126,19 @@ public class Splash extends AppCompatActivity {
                                 @Override
                                 public void onResponse(@NonNull Call<Integer> call, Response<Integer> response) {
                                     if(response.body()==1){
-                                        Toast.makeText(Splash.this,"True",Toast.LENGTH_LONG).show();
+
+                                        Toast.makeText(Splash.this,"Login Successful ",Toast.LENGTH_LONG).show();
                                         startActivity(new Intent(Splash.this, MapsActivity.class));
                                     }else{
+
                                         FirebaseAuth.getInstance().signOut();
-                                        Toast.makeText(Splash.this,"False",Toast.LENGTH_LONG).show();
+                                        Toast.makeText(Splash.this,"Login Failed ",Toast.LENGTH_LONG).show();
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<Integer> call, Throwable t) {
-                                    Log.w(TAG, "Google sign in failed"+ t.getMessage());
+                                    Log.w(TAG, "Google sign in failed testt"+ t.getMessage());
                                     Toast.makeText(Splash.this,"Login Failed... Please Retry !",Toast.LENGTH_LONG).show();
                                 }
                             });
@@ -169,7 +171,7 @@ public class Splash extends AppCompatActivity {
         String coverUrl;
         String userToken;
 
-        public UserInfoClass(String uId, String name, String email, String profileUrl, String coverUrl, String userToken) {
+         UserInfoClass(String uId, String name, String email, String profileUrl, String coverUrl, String userToken) {
             this.uId = uId;
             this.name = name;
             this.email = email;
