@@ -1,7 +1,9 @@
 package com.footprints.footprints.rest.callbacks;
 
-import com.footprints.footprints.activities.MapsActivity;
+import com.footprints.footprints.fragments.ExploreMemories;
+import com.footprints.footprints.fragments.PlaceReviewFragment;
 import com.footprints.footprints.models.Addresses;
+import com.footprints.footprints.models.Review;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,11 @@ public interface AddressInterface {
 
 
     @POST("app/addpoi")
-    Call<Integer>addPoi(@Body MapsActivity.PoiLatLog latLog);
+    Call<Integer>addPoi(@Body ExploreMemories.AddPoi latLog);
 
+    @POST("app/addreview")
+    Call<Integer>addReview(@Body PlaceReviewFragment.AddReviews addReviews);
+
+    @POST("app/retrivereview")
+    Call<Review>retrivereview(@Body PlaceReviewFragment.RetriveReviews retriveReviews);
 }

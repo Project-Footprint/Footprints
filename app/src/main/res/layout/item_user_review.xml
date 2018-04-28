@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    app:cardElevation="1dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/review_meta_rel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/reviewr_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/img_default_user" />
+
+        <TextView
+            android:id="@+id/reviewer_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textStyle="bold"
+            android:textColor="#3f51ff"
+            android:textSize="16sp"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/reviewr_image" />
+
+
+        <TextView
+            android:id="@+id/review_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:layout_below="@id/reviewer_name"
+            android:layout_toEndOf="@+id/reviewr_image" />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="Review"
+            android:textSize="15sp"
+            android:paddingStart="16dp"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/review_meta_rel"
+          />
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

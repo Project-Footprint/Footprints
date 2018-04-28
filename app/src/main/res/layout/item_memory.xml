@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardElevation="2dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/memory_meta_rel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/memory_people_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/img_default_user" />
+
+            <TextView
+                android:id="@+id/memory_people_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/memory_people_image"
+                android:text="Name"
+                android:textColor="#3f51ff"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/memory_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/memory_people_name"
+                android:layout_toEndOf="@+id/memory_people_image"
+                android:text="Date" />
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/post"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="2dp"
+            android:paddingStart="16dp"
+            android:text="Posts"
+            android:textSize="15sp"
+            android:layout_below="@id/memory_meta_rel"
+            tools:ignore="RtlSymmetry" />
+        <ImageView
+            android:id="@+id/memory_image"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_marginTop="2dp"
+            android:layout_below="@id/post"
+            android:scaleType="fitXY"
+            android:src="@drawable/manang" />
+
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.CardView>

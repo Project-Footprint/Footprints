@@ -72,7 +72,7 @@ public class Splash extends AppCompatActivity {
         if(mUser!=null){
             Log.d(TAG,"Already Logged In");
             startActivity(new Intent(Splash.this, MapsActivity.class));
-
+            finish();
         }
 
 
