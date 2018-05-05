@@ -3,6 +3,7 @@ package com.footprints.footprints.rest.callbacks;
 import com.footprints.footprints.fragments.ExploreMemories;
 import com.footprints.footprints.fragments.PlaceReviewFragment;
 import com.footprints.footprints.models.Addresses;
+import com.footprints.footprints.models.FootprintsImage;
 import com.footprints.footprints.models.Review;
 
 import java.util.List;
@@ -19,13 +20,19 @@ public interface AddressInterface {
     @GET("app/addresses")
     Call<List<Addresses>> getAddresses(@QueryMap Map<String, String> params);
 
-
     @POST("app/addpoi")
     Call<Integer>addPoi(@Body ExploreMemories.AddPoi latLog);
 
     @POST("app/addreview")
     Call<Integer>addReview(@Body PlaceReviewFragment.AddReviews addReviews);
 
-    @POST("app/retrivereview")
-    Call<Review>retrivereview(@Body PlaceReviewFragment.RetriveReviews retriveReviews);
+    @GET("app/retrivereview")
+    Call<Review>retrivereview(@QueryMap Map<String, String> params);
+
+    @GET("app/recommendation")
+    Call<List<Addresses>> getRecommendationAddresses(@QueryMap Map<String, String> params);
+
+    @GET("app/getplacefootprints")
+    Call<FootprintsImage> getPlaceFootprints(@QueryMap Map<String, String> params);
+
 }

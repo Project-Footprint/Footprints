@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -31,6 +30,7 @@ import android.widget.Toast;
 import com.footprints.footprints.R;
 import com.footprints.footprints.activities.PlaceActivity;
 import com.footprints.footprints.controllers.MultiDrawable;
+import com.footprints.footprints.controllers.NetworkDetectController;
 import com.footprints.footprints.models.Addresses;
 import com.footprints.footprints.models.Person;
 import com.footprints.footprints.rest.ApiClient;
@@ -51,11 +51,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
@@ -71,41 +71,42 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import okhttp3.Cache;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class ExploreMemories extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ClusterManager.OnClusterClickListener<Person>, ClusterManager.OnClusterItemInfoWindowClickListener<Person>, ClusterManager.OnClusterItemClickListener<Person>, ClusterManager.OnClusterInfoWindowClickListener<Person> {
 
     private GoogleMap mMap;
     private static final int REQUEST_LOCATION = 1;
-    private LocationManager locationManager;
     public static  String lattitude, longitude;
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     GoogleApiClient mGoogleApiClient;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
     LocationCallback locationCallback;
     private ClusterManager<Person> mClusterManager;
     FragmentActivity context;
     public static Double lattitudeDouble,longitudeDouble;
 
-    private List<Target> targets = new ArrayList<>();
+    static int cacheSize = 10 * 1024 * 1024; // 10 MB
+
+   public   static Cache cache;
     public ExploreMemories() {
         // Required empty public constructor
     }
+    public static  boolean isNetwork = false;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = (FragmentActivity) context;
+        isNetwork = NetworkDetectController.checkConnection(context);
+        cache= new Cache(context.getCacheDir(), cacheSize);
     }
 
 
@@ -134,12 +135,12 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
 
         mMap.setOnCameraIdleListener(mClusterManager);
         mMap.setOnMarkerClickListener(mClusterManager);
-        mMap.setOnInfoWindowClickListener(mClusterManager);
+        //mMap.setOnInfoWindowClickListener(mClusterManager);
 
         mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterInfoWindowClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
-        mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+   //     mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
 
         Log.d("LogTracker4", "onMapReady");
@@ -149,7 +150,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-        // mMap.setMinZoomPreference(5f);
+         mMap.setMinZoomPreference(11f);
 
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.getUiSettings().setScrollGesturesEnabled(true);
@@ -244,6 +245,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
         Map<String, String> params = new HashMap<String, String>();
         params.put("lattitude", lattitude);
         params.put("lognitude", longitude);
+        params.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 
         AddressInterface addressInterface = ApiClient.getApiClient().create(AddressInterface.class);
@@ -252,13 +254,22 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
             @Override
             public void onResponse(Call<List<Addresses>> call, Response<List<Addresses>> response) {
                 if (response.body() != null) {
+
+                    if (response.raw().cacheResponse() != null) {
+                        Log.d("checkCache", "From Cache Memories");
+                    } else if (response.raw().networkResponse() != null) {
+                        Log.d("checkCache", "Network call Memories");
+                    } else {
+                        Log.d("checkCache", "Unknown Memories");
+                    }
+
                     for (int i = 0; i < response.body().size(); i++) {
                         // Add a marker in Sydney and move the camera
                         double lat = Double.parseDouble(response.body().get(i).getLat());
                         double log = Double.parseDouble(response.body().get(i).getLon());
                         String markerTitle = response.body().get(i).getName();
                         String aid = response.body().get(i).getAid();
-                        String profileUrl = response.body().get(i).getProfileUrl();
+                        String profileUrl = ApiClient.BASE_URL+response.body().get(i).getProfileUrl();
 
                         LatLng sydney = new LatLng(lat, log);
                         MarkerOptions markerOptions = new MarkerOptions();
@@ -331,7 +342,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
         });
 
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLatitude()), 13f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLatitude()), 12f));
         // CameraUpdate cameraPosition = CameraUpdateFactory.scrollBy(10,30);
 
         //mMap.animateCamera(cameraPosition);
@@ -588,7 +599,10 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mGoogleApiClient.disconnect();
+        if(mGoogleApiClient!=null){
+            mGoogleApiClient.disconnect();
+        }
+
 
     }
 
@@ -694,4 +708,5 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
         return new BitmapDrawable(context.getResources(), cacheTarget.getCacheBitmap());
 
     }
+
 }

@@ -1,0 +1,67 @@
+package com.footprints.footprints.adapter;
+
+import android.content.Context;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+
+import com.footprints.footprints.fragments.ProfileCheckInFragment;
+import com.footprints.footprints.fragments.ProfilePostsFragment;
+
+
+public class ProfileViewPagerAdapter extends FragmentPagerAdapter {
+    int size = 0;
+    Context context;
+
+
+    public ProfileViewPagerAdapter(FragmentManager fm, int size, Context context) {
+        super(fm);
+        this.size = size;
+        this.context = context;
+
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+        switch (position) {
+
+            case 0:
+
+                return new ProfilePostsFragment();
+
+            case 1:
+
+                return new ProfileCheckInFragment();
+
+
+            default:
+                return null;
+        }
+
+    }
+
+    @Override
+    public int getCount() {
+        return size;
+    }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        switch (position) {
+
+
+            case 0:
+
+                return "Posts";
+            case 1:
+
+                return "Check Ins";
+
+
+
+            default:
+                return null;
+        }
+    }
+
+}

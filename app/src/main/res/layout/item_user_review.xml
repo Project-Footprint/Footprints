@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:text="Name"
             android:textStyle="bold"
-            android:textColor="#3f51ff"
+            android:textColor="#747fe9"
             android:textSize="16sp"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/reviewr_image" />

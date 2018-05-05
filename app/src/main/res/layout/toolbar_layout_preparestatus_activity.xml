@@ -5,6 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Spinner
+        android:id="@+id/privacy_spinner"
+        android:layout_width="wrap_content"
+        android:layout_toStartOf="@id/postBtnTxt"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="16dp"
+    />
 
 
     <TextView
@@ -13,12 +21,11 @@
         android:layout_height="wrap_content"
         android:text="Post"
         android:textSize="18sp"
-        android:textColor="#FFF"
+        android:textColor="#000"
         android:textStyle="bold"
+        android:layout_marginTop="10dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="27dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="27dp" />
+        android:layout_marginEnd="27dp" />
 
 </RelativeLayout>

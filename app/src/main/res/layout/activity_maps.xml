@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activities.MapsActivity">
 
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/maps_activity_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:titleTextColor="#000"
+        app:title="Footprints"
+        android:background="@color/colorPrimary" />
 
     <FrameLayout
         android:id="@+id/mainFramelayout"
         android:layout_width="match_parent"
+        android:layout_below="@id/maps_activity_toolbar"
         android:layout_above="@id/bottom_navigation"
         android:layout_height="match_parent">
 
@@ -21,5 +31,6 @@
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#fff"
         android:layout_alignParentBottom="true" />
 </RelativeLayout>

@@ -1,11 +1,14 @@
 package com.footprints.footprints.appintro;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.footprints.footprints.R;
@@ -38,9 +41,13 @@ public class Splash extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private SignInButton signInButton;
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
 
         //Initializing the Views
@@ -62,6 +69,11 @@ public class Splash extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(Splash.this, gso);
 
         mAuth = FirebaseAuth.getInstance();
+        progressDialog = new ProgressDialog(Splash.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Sigining You In. Please wait ...");
+
+
     }
 
     @Override
@@ -69,13 +81,11 @@ public class Splash extends AppCompatActivity {
         super.onStart();
         mUser = mAuth.getCurrentUser();
 
-        if(mUser!=null){
-            Log.d(TAG,"Already Logged In");
+        if (mUser != null) {
+            Log.d(TAG, "Already Logged In");
             startActivity(new Intent(Splash.this, MapsActivity.class));
             finish();
         }
-
-
 
 
     }
@@ -92,6 +102,7 @@ public class Splash extends AppCompatActivity {
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            progressDialog.show();
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -114,41 +125,44 @@ public class Splash extends AppCompatActivity {
                         if (task.isSuccessful()) {
 
                             // Sign in success, update UI with the signed-in user's information
-                            mUser= mAuth.getCurrentUser();
+                            mUser = mAuth.getCurrentUser();
                             String token = FirebaseInstanceId.getInstance().getToken();
                             String photoUrl = mUser.getPhotoUrl().toString();
                             //SharedPreferenceController.saveUserInfo(Splash.this,mUser.getUid(),mUser.getDisplayName(),mUser.getEmail(),photoUrl,token);
 
                             // Now Store the data in the mysql Database
                             UsersInterface UsersInterface = ApiClient.getApiClient().create(UsersInterface.class);
-                            Call<Integer> call = UsersInterface.singIn(new UserInfoClass(mUser.getUid(),mUser.getDisplayName(),mUser.getEmail(),photoUrl,"default/cover",token));
+                            Call<Integer> call = UsersInterface.singIn(new UserInfoClass(mUser.getUid(), mUser.getDisplayName(), mUser.getEmail(), photoUrl, "default/cover", token));
                             call.enqueue(new Callback<Integer>() {
                                 @Override
                                 public void onResponse(@NonNull Call<Integer> call, Response<Integer> response) {
-                                    if(response.body()==1){
+                                    if (response.body() == 1) {
 
-                                        Toast.makeText(Splash.this,"Login Successful ",Toast.LENGTH_LONG).show();
+                                        Toast.makeText(Splash.this, "Login Successful ", Toast.LENGTH_LONG).show();
                                         startActivity(new Intent(Splash.this, MapsActivity.class));
-                                    }else{
+                                        progressDialog.dismiss();
+                                    } else {
 
                                         FirebaseAuth.getInstance().signOut();
-                                        Toast.makeText(Splash.this,"Login Failed ",Toast.LENGTH_LONG).show();
+                                        progressDialog.dismiss();
+                                        Toast.makeText(Splash.this, "Login Failed ", Toast.LENGTH_LONG).show();
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<Integer> call, Throwable t) {
-                                    Log.w(TAG, "Google sign in failed testt"+ t.getMessage());
-                                    Toast.makeText(Splash.this,"Login Failed... Please Retry !",Toast.LENGTH_LONG).show();
+                                    Log.w(TAG, "Google sign in failed testt" + t.getMessage());
+                                    progressDialog.dismiss();
+                                    Toast.makeText(Splash.this, "Login Failed... Please Retry !", Toast.LENGTH_LONG).show();
                                 }
                             });
 
 
-
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.w(TAG, "Google sign in failed"+ task.toString());
-                            Toast.makeText(Splash.this,"Login Failed... Please Retry !",Toast.LENGTH_LONG).show();
+                            Log.w(TAG, "Google sign in failed" + task.toString());
+                            progressDialog.dismiss();
+                            Toast.makeText(Splash.this, "Login Failed... Please Retry !", Toast.LENGTH_LONG).show();
 
                         }
 
@@ -163,7 +177,7 @@ public class Splash extends AppCompatActivity {
         finish();
     }
 
-    public class UserInfoClass{
+    public class UserInfoClass {
         String uId;
         String name;
         String email;
@@ -171,7 +185,7 @@ public class Splash extends AppCompatActivity {
         String coverUrl;
         String userToken;
 
-         UserInfoClass(String uId, String name, String email, String profileUrl, String coverUrl, String userToken) {
+        UserInfoClass(String uId, String name, String email, String profileUrl, String coverUrl, String userToken) {
             this.uId = uId;
             this.name = name;
             this.email = email;

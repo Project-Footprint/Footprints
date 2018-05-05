@@ -25,6 +25,26 @@ public class User {
     @Expose
     private String userToken;
 
+    @SerializedName("state")
+    @Expose
+    private String state;
+
+    public String getuId() {
+        return uId;
+    }
+
+    public void setuId(String uId) {
+        this.uId = uId;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public String getUId() {
         return uId;
     }

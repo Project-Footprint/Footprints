@@ -5,10 +5,24 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ExplorePlaces">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/recommendation_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Recommendated Places"
+            android:textColor="#000"
+            android:textSize="19sp"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/recommendation_listview"
+            android:layout_width="match_parent"
+            android:layout_below="@id/recommendation_title"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
 </FrameLayout>

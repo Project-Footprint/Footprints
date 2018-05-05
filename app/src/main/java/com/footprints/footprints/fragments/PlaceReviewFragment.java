@@ -35,7 +35,9 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -125,25 +127,43 @@ public class PlaceReviewFragment extends android.support.v4.app.Fragment {
                 performReviewSend();
             }
         });
-        getReviews();
+
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getReviews();
     }
 
     private void getReviews() {
         AddressInterface postInterface = ApiClient.getApiClient().create(AddressInterface.class);
-        Call<Review> call = postInterface.retrivereview(new RetriveReviews(PlaceActivity.latitude, PlaceActivity.longitude));
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("lattitude", PlaceActivity.latitude);
+        params.put("longnitude", PlaceActivity.longitude);
+        Call<Review> call = postInterface.retrivereview(params);
         call.enqueue(new Callback<Review>() {
             @Override
             public void onResponse(@NonNull Call<Review> call, Response<Review> response) {
+                    if(response.body()!=null){
+                        if (response.raw().cacheResponse() != null) {
+                            Log.d("checkCache", "From Cache Inside reviews  ");
+                        } else if (response.raw().networkResponse() != null) {
+                            Log.d("checkCache", "Network call Inside reviews ");
+                        } else {
+                            Log.d("checkCache", "Unknown Inside reviews ");
+                        }
+                        if (response.body().getReview().getSuccess() == 1) {
+                            reviews.addAll(response.body().getReview().getMessage());
+                            Log.d("FetchReveiw","Got IT");
 
-                if (response.body().getReview().getSuccess() == 1) {
-                    reviews.addAll(response.body().getReview().getMessage());
-                    Log.d("FetchReveiw","Got IT");
+                            reviewRecyclerview.setAdapter(reviewAdapter);
+                        } else {
+                            Log.d("FetchReveiw","Couldn't Got it");
+                        }
+                    }
 
-                    reviewRecyclerview.setAdapter(reviewAdapter);
-                } else {
-                    Log.d("FetchReveiw","Couldn't Got it");
-                }
 
             }
 
@@ -169,8 +189,9 @@ public class PlaceReviewFragment extends android.support.v4.app.Fragment {
         Call<Integer> call = postInterface.addReview(new AddReviews(cmts, userId, PlaceActivity.latitude, PlaceActivity.longitude));
         call.enqueue(new Callback<Integer>() {
             @Override
-            public void onResponse(@NonNull Call<Integer> call, Response<Integer> response) {
-                if (response.body() == 1) {
+            public void onResponse(@NonNull Call<Integer> call, @NonNull Response<Integer> response) {
+
+                if (response.body() != null && response.body() ==1) {
 
 
                     Toast.makeText(context, "Review Successful ", Toast.LENGTH_LONG).show();
@@ -235,15 +256,7 @@ public class PlaceReviewFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public static class  RetriveReviews {
-        String lattitude;
-        String longnitude;
 
-        public RetriveReviews(String lattitude, String longnitude) {
-            this.lattitude = lattitude;
-            this.longnitude = longnitude;
-        }
-    }
 
     @Override
     public void onStop() {

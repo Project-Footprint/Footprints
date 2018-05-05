@@ -1,18 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".appintro.Splash">
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/google_signin_btn"
-        android:layout_alignParentBottom="true"
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="10dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/memories_7" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="#a0ffffff"
+            android:layout_gravity="center">
+
+
+
+            <TextView
+                android:id="@+id/app_theme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="50dp"
+                android:layout_marginTop="50dp"
+                android:text="Things End.\nBut Memories last Forever.\nShare your memories\nWith the World."
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="26sp"
+                android:textStyle="bold|italic" />
+
+
+
+        </RelativeLayout>
+
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/google_signin_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp" />
+    </FrameLayout>
 
 </RelativeLayout>

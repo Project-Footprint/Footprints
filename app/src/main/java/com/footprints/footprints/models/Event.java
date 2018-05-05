@@ -11,6 +11,9 @@ public class Event {
     @SerializedName("ename")
     @Expose
     private String ename;
+    @SerializedName("eplace")
+    @Expose
+    private String eplace;
     @SerializedName("lat")
     @Expose
     private String lat;
@@ -39,8 +42,16 @@ public class Event {
         return ename;
     }
 
+    public String getEplace() {
+        return eplace;
+    }
+
     public void setEname(String ename) {
         this.ename = ename;
+    }
+
+    public void setEplace(String eplace) {
+        this.eplace = eplace;
     }
 
     public String getLat() {
@@ -83,4 +94,14 @@ public class Event {
         this.distance = distance;
     }
 
+    public Event(String eid, String ename, String eplace, String lat, String log, String startdate, String enddate, String distance) {
+        this.eid = eid;
+        this.ename = ename;
+        this.eplace = eplace;
+        this.lat = lat;
+        this.log = log;
+        this.startdate = startdate;
+        this.enddate = enddate;
+        this.distance = distance;
+    }
 }

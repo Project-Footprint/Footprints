@@ -20,9 +20,12 @@ import com.footprints.footprints.controllers.VerticalNewsPaddingController;
 import com.footprints.footprints.models.Post;
 import com.footprints.footprints.rest.ApiClient;
 import com.footprints.footprints.rest.callbacks.PostInterface;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,25 +52,46 @@ public class PlaceFriendFragment extends Fragment {
         memoriesRecyclerView.addItemDecoration(new VerticalNewsPaddingController(3));
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         memoriesRecyclerView.setLayoutManager(layoutManager);
+        memoriesRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
         memoriesAdapter = new MemoriesAdapter(posts, context);
-        getMemoriesPost();
+
+
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getMemoriesPost();
     }
 
     private void getMemoriesPost() {
         PostInterface postInterface = ApiClient.getApiClient().create(PostInterface.class);
-        Call<Post> call = postInterface.retrivePosts(new PlaceReviewFragment.RetriveReviews(PlaceActivity.latitude, PlaceActivity.longitude));
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("lattitude", PlaceActivity.latitude);
+        params.put("longnitude", PlaceActivity.longitude);
+        params.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        Call<Post> call = postInterface.retrivePosts(params);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(@NonNull Call<Post> call, Response<Post> response) {
-
-                if (response.body().getMemories().getSuccess() == 1) {
-                    posts.addAll(response.body().getMemories().getMessage());
-                    Log.d("FetchReveiw","Got IT");
-                    memoriesRecyclerView.setAdapter(memoriesAdapter);
-                } else {
-                    Log.d("FetchReveiw","Couldn't Got it");
+                if(response.body()!=null){
+                    if (response.raw().cacheResponse() != null) {
+                        Log.d("checkCache", "From Cache Inside Memoreis  ");
+                    } else if (response.raw().networkResponse() != null) {
+                        Log.d("checkCache", "Network call Inside Memoreis ");
+                    } else {
+                        Log.d("checkCache", "Unknown Inside Memoreis ");
+                    }
+                    if (response.body().getMemories().getSuccess() == 1) {
+                        posts.addAll(response.body().getMemories().getMessage());
+                        Log.d("FetchReveiw","Got IT");
+                        memoriesRecyclerView.setAdapter(memoriesAdapter);
+                    } else {
+                        Log.d("FetchReveiw","Couldn't Got it");
+                    }
                 }
+
 
             }
 

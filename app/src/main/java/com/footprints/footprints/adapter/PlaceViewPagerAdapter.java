@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.footprints.footprints.fragments.PlaceFriendFragment;
-import com.footprints.footprints.fragments.PlacePublicFragment;
 import com.footprints.footprints.fragments.PlaceReviewFragment;
 
 
@@ -31,13 +30,8 @@ public class PlaceViewPagerAdapter extends FragmentPagerAdapter {
                 PlaceFriendFragment friendFragment = new PlaceFriendFragment();
                 return friendFragment;
 
+
             case 1:
-
-                PlacePublicFragment publicFragment = new PlacePublicFragment();
-                return publicFragment;
-
-
-            case 2:
 
                 PlaceReviewFragment reviewFragment = new PlaceReviewFragment();
                 return reviewFragment;
@@ -63,12 +57,8 @@ public class PlaceViewPagerAdapter extends FragmentPagerAdapter {
                 return "Friends";
             case 1:
 
-                    return "Public";
-
-
-            case 2:
-
                 return "Reviews";
+
 
             default:
                 return null;

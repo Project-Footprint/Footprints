@@ -11,17 +11,18 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.footprints.footprints.R;
+import com.footprints.footprints.adapter.EventAdpater;
 import com.footprints.footprints.controllers.ControllerPixels;
 import com.footprints.footprints.models.Event;
 import com.footprints.footprints.models.MyItem;
@@ -39,7 +40,9 @@ import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,8 +55,11 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
     Context context;
     ListView listView;
     private ClusterManager<MyItem> mClusterManager;
-    ArrayList<String> eventsLists = new ArrayList<>();
+
+    ArrayList<Event> eventsLists = new ArrayList<>();
     ArrayList<LatLng> latlog = new ArrayList<>();
+    EventAdpater eventAdpater;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -64,13 +70,6 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.eventMap);
-        mapFragment.getMapAsync(ExploreEvents.this);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -117,40 +116,67 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
 
             }
         });
-        retriveEvents();
+
         return view;
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.eventMap);
+        mapFragment.getMapAsync(ExploreEvents.this);
+        retriveEvents();
     }
 
     private void retriveEvents() {
         if (ExploreMemories.lattitudeDouble != null && ExploreMemories.longitudeDouble != null) {
             EventInterface postInterface = ApiClient.getApiClient().create(EventInterface.class);
-            Call<List<Event>> call = postInterface.retriveEvents(new RetriveEvents(ExploreMemories.lattitudeDouble + "", ExploreMemories.longitudeDouble + ""));
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("lattitude", ExploreMemories.lattitude);
+            params.put("longnitude", ExploreMemories.longitude);
+            Call<List<Event>> call = postInterface.retriveEvents(params);
             call.enqueue(new Callback<List<Event>>() {
                 @Override
                 public void onResponse(@NonNull Call<List<Event>> call, Response<List<Event>> response) {
-                    for (int i = 0; i < response.body().size(); i++) {
-                        double lat = Double.parseDouble(response.body().get(i).getLat());
-                        double log = Double.parseDouble(response.body().get(i).getLog());
+                    if(response.body() !=null) {
+
+
+                        if (response.raw().cacheResponse() != null) {
+                            Log.d("checkCache", "From Cache");
+                        } else if (response.raw().networkResponse() != null) {
+                            Log.d("checkCache", "Network call");
+                        } else {
+                            Log.d("checkCache", "Unknown");
+                        }
+                        for (int i = 0; i < response.body().size(); i++) {
+                            double lat = Double.parseDouble(response.body().get(i).getLat());
+                            double log = Double.parseDouble(response.body().get(i).getLog());
                        /* LatLng latLng = new LatLng(lat, log);
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.title(response.body().get(i).getEname());
                         markerOptions.position(latLng);
                         mMap.addMarker(markerOptions);*/
-                        eventsLists.add(response.body().get(i).getEname());
+                            eventsLists.add(response.body().get(i));
+                            latlog.add(new LatLng(lat, log));
 
-                        latlog.add(new LatLng(lat,log));
-                        MyItem offsetItem = new MyItem(lat, log);
-                        mClusterManager.addItem(offsetItem);
-                        mClusterManager.cluster();
+                            MyItem offsetItem = new MyItem(lat, log);
+                            mClusterManager.addItem(offsetItem);
+                            mClusterManager.cluster();
 
+                        }
+                        for (int i = 0; i < eventsLists.size(); i++) {
+                            Log.d("checkuui", eventsLists.get(i).getEname());
+                            Log.d("checkuui", eventsLists.get(i).getEnddate());
+                            Log.d("checkuui", eventsLists.get(i).getLat());
+                        }
+                        eventAdpater = new EventAdpater(eventsLists, context, R.layout.item_custom_event);
+                        listView.setAdapter(eventAdpater);
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1, android.R.id.text1, eventsLists);
-                    listView.setAdapter(adapter);
                 }
 
                 @Override
                 public void onFailure(Call<List<Event>> call, Throwable t) {
-                    Toast.makeText(getContext(), "Events Retrival Failed... Please Retry !", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Events Retrival Failed... Please Retry !", Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -224,7 +250,7 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
             @Override
             public void onPoiClick(PointOfInterest pointOfInterest) {
                 EventInterface postInterface = ApiClient.getApiClient().create(EventInterface.class);
-                Call<Integer> call = postInterface.addEvent(new AddEvents(pointOfInterest.latLng.latitude + "", pointOfInterest.latLng.longitude + "", pointOfInterest.name + " Events"));
+                Call<Integer> call = postInterface.addEvent(new AddEvents(pointOfInterest.latLng.latitude + "", pointOfInterest.latLng.longitude + "", pointOfInterest.name + " Events",pointOfInterest.name));
                 call.enqueue(new Callback<Integer>() {
                     @Override
                     public void onResponse(@NonNull Call<Integer> call, Response<Integer> response) {
@@ -250,22 +276,24 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
         String lattitude;
         String longnitude;
         String name;
+        String place;
 
-        public AddEvents(String lattitude, String longitude, String name) {
+        public AddEvents(String lattitude, String longitude, String name,String place) {
             this.lattitude = lattitude;
             this.longnitude = longitude;
             this.name = name;
+            this.place = place;
         }
     }
 
-    public class RetriveEvents {
-        String lattitude;
-        String longnitude;
-
-        public RetriveEvents(String lattitude, String longnitude) {
-            this.lattitude = lattitude;
-            this.longnitude = longnitude;
+    @Override
+    public void onStop() {
+        super.onStop();
+        if(eventAdpater!=null){
+            eventsLists.clear();
+            latlog.clear();
+            eventAdpater.notifyDataSetChanged();
         }
-    }
 
+    }
 }

@@ -1,5 +1,4 @@
- package com.footprints.footprints.models;
-
+package com.footprints.footprints.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -19,6 +18,23 @@ public class Post {
     public void setMemories(Memories memories) {
         this.memories = memories;
     }
+
+    public class Imageurl {
+
+        @SerializedName("path")
+        @Expose
+        private String path;
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+    }
+
 
     public class Memories {
 
@@ -47,7 +63,6 @@ public class Post {
 
     }
 
-
     public class Message {
 
         @SerializedName("postId")
@@ -62,6 +77,12 @@ public class Post {
         @SerializedName("statusImage")
         @Expose
         private String statusImage;
+        @SerializedName("hasImage")
+        @Expose
+        private String hasImage;
+        @SerializedName("hasMultipleImage")
+        @Expose
+        private String hasMultipleImage;
         @SerializedName("statusTime")
         @Expose
         private String statusTime;
@@ -86,6 +107,9 @@ public class Post {
         @SerializedName("userToken")
         @Expose
         private String userToken;
+        @SerializedName("imageurls")
+        @Expose
+        private List<Imageurl> imageurls = null;
 
         public String getPostId() {
             return postId;
@@ -117,6 +141,22 @@ public class Post {
 
         public void setStatusImage(String statusImage) {
             this.statusImage = statusImage;
+        }
+
+        public String getHasImage() {
+            return hasImage;
+        }
+
+        public void setHasImage(String hasImage) {
+            this.hasImage = hasImage;
+        }
+
+        public String getHasMultipleImage() {
+            return hasMultipleImage;
+        }
+
+        public void setHasMultipleImage(String hasMultipleImage) {
+            this.hasMultipleImage = hasMultipleImage;
         }
 
         public String getStatusTime() {
@@ -181,6 +221,14 @@ public class Post {
 
         public void setUserToken(String userToken) {
             this.userToken = userToken;
+        }
+
+        public List<Imageurl> getImageurls() {
+            return imageurls;
+        }
+
+        public void setImageurls(List<Imageurl> imageurls) {
+            this.imageurls = imageurls;
         }
 
     }
