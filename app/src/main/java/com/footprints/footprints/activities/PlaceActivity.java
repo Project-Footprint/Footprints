@@ -163,7 +163,7 @@ public class PlaceActivity extends AppCompatActivity implements ViewPager.OnPage
                             sliderLayout.addSlider(defaultSliderView);
                         }
                         sliderLayout.startAutoCycle();
-                        sliderLayout.setPresetTransformer(SliderLayout.Transformer.ZoomOutSlide);
+                        sliderLayout.setPresetTransformer(SliderLayout.Transformer.Stack);
                         sliderLayout.setPresetIndicator(SliderLayout.PresetIndicators.Right_Bottom);
                         sliderLayout.setDuration(4000);
                     }

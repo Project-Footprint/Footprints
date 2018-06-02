@@ -2,6 +2,7 @@ package com.footprints.footprints.rest.callbacks;
 
 import com.footprints.footprints.activities.ProfileActivity;
 import com.footprints.footprints.appintro.Splash;
+import com.footprints.footprints.models.Notification;
 import com.footprints.footprints.models.User;
 
 import java.util.List;
@@ -28,6 +29,10 @@ public interface UsersInterface {
 
     @GET("app/loadowninfo")
     Call<User> getOwnInfo(@QueryMap Map<String, String> params);
+
+    @GET("app/getnotification")
+    Call<List<Notification>> getNotification(@QueryMap Map<String, String> params);
+
 
     @GET("app/loadotherinfo")
     Call<User> getOthersInfo(@QueryMap Map<String, String> params);

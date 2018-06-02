@@ -20,10 +20,10 @@
         android:icon="@drawable/icon_explore_events"
         android:title="Events"
         app:showAsAction="ifRoom" />
-    <item
+    <!--<item
         android:id="@+id/explore_notification"
         android:enabled="true"
         android:icon="@drawable/icon_notification"
         android:title="Notification"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />-->
 </menu>

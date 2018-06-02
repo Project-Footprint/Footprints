@@ -18,12 +18,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.footprints.footprints.R;
 import com.footprints.footprints.fragments.ExploreEvents;
 import com.footprints.footprints.fragments.ExploreMemories;
-import com.footprints.footprints.fragments.ExploreNotification;
 import com.footprints.footprints.fragments.ExplorePlaces;
 import com.footprints.footprints.models.User;
 import com.footprints.footprints.rest.ApiClient;
@@ -47,12 +47,13 @@ public class MapsActivity extends AppCompatActivity {
     private ExploreEvents exploreEvents;
     private ExploreMemories exploreMemories;
     private ExplorePlaces explorePlaces;
-    private ExploreNotification exploreNotification;
+
     Toolbar toolbar;
     private LayoutInflater layoutInflater;
     CircleImageView profieImage;
     public static String profileImage = "";
     BottomNavigationView bottomNavigationView;
+    private ImageView notificationImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,7 @@ public class MapsActivity extends AppCompatActivity {
         exploreEvents = new ExploreEvents();
         exploreMemories = new ExploreMemories();
         explorePlaces = new ExplorePlaces();
-        exploreNotification = new ExploreNotification();
+
 
 
         Log.d("TokenId", FirebaseInstanceId.getInstance().getToken());
@@ -82,6 +83,14 @@ public class MapsActivity extends AppCompatActivity {
         View custumBarLayout = layoutInflater.inflate(R.layout.custom_menu_layout, null);
         actionBar.setCustomView(custumBarLayout);
         profieImage = custumBarLayout.findViewById(R.id.profile_icon);
+
+        notificationImageView = custumBarLayout.findViewById(R.id.notification_icon_top);
+        notificationImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MapsActivity.this,NotificationActivity.class));
+            }
+        });
 
         getAccountBasicInfo(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
@@ -116,8 +125,10 @@ public class MapsActivity extends AppCompatActivity {
         if (bundle != null) {
             isFromNotification = getIntent().getExtras().getString("isNotification", "false");
             if (isFromNotification.equals("true")) {
-                setFragment(exploreNotification);
-                bottomNavigationView.getMenu().findItem(R.id.explore_notification).setChecked(true);
+               // setFragment(exploreNotification);
+                // here is the explore_notification
+             //   bottomNavigationView.getMenu().findItem(R.id.explore_notification).setChecked(true);
+                startActivity(new Intent(MapsActivity.this,NotificationActivity.class));
             } else {
                 setFragment(exploreMemories);
             }
@@ -144,10 +155,10 @@ public class MapsActivity extends AppCompatActivity {
                                 // bottomNavigationView.setItemBackgroundResource(R.color.cardview_dark_background);
                                 setFragment(exploreEvents);
                                 break;
-                            case R.id.explore_notification:
+                          /*  case R.id.explore_notification:
                                 // bottomNavigationView.setItemBackgroundResource(R.color.cardview_dark_background);
                                 setFragment(exploreNotification);
-                                break;
+                                break;*/
                         }
                         return true;
                     }

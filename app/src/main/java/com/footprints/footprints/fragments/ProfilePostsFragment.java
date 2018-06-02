@@ -32,9 +32,10 @@ import retrofit2.Response;
 
 public class ProfilePostsFragment extends Fragment {
     RecyclerView memoriesRecyclerView;
-    MemoriesAdapter memoriesAdapter;
-    List<Post.Message> posts = new ArrayList<>();
+    public static MemoriesAdapter memoriesAdapter;
+    public static List<Post.Message> posts = new ArrayList<>();
     Context context;
+    public  static   boolean isClearNeeded=true;
 
     @Override
     public void onAttach(Context context) {
@@ -60,6 +61,7 @@ public class ProfilePostsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        Log.d("FetchReveiw", "onStart");
         getMemoriesPost();
     }
 
@@ -72,7 +74,7 @@ public class ProfilePostsFragment extends Fragment {
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(@NonNull Call<Post> call, Response<Post> response) {
-                if(response.body()!=null){
+                if (response.body() != null) {
                     if (response.raw().cacheResponse() != null) {
                         Log.d("checkCache", "From Cache Inside Memoreis  ");
                     } else if (response.raw().networkResponse() != null) {
@@ -82,10 +84,10 @@ public class ProfilePostsFragment extends Fragment {
                     }
                     if (response.body().getMemories().getSuccess() == 1) {
                         posts.addAll(response.body().getMemories().getMessage());
-                        Log.d("FetchReveiw","Got IT");
+                        Log.d("FetchReveiw", "Got IT");
                         memoriesRecyclerView.setAdapter(memoriesAdapter);
                     } else {
-                        Log.d("FetchReveiw","Couldn't Got it");
+                        Log.d("FetchReveiw", "Couldn't Got it");
                     }
                 }
 
@@ -102,7 +104,18 @@ public class ProfilePostsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        posts.clear();
-        memoriesAdapter.notifyDataSetChanged();
+        Log.d("FetchReveiw", "onStop");
+        if(isClearNeeded){
+            posts.clear();
+            memoriesAdapter.notifyDataSetChanged();
+        }
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d("FetchReveiw", "onDetach");
+
     }
 }

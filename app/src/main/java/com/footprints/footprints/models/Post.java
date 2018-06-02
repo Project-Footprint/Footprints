@@ -1,6 +1,9 @@
 package com.footprints.footprints.models;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import org.parceler.Parcel;
 
 import java.util.List;
 
@@ -19,7 +22,8 @@ public class Post {
         this.memories = memories;
     }
 
-    public class Imageurl {
+    @Parcel
+    public static class Imageurl {
 
         @SerializedName("path")
         @Expose
@@ -35,8 +39,8 @@ public class Post {
 
     }
 
-
-    public class Memories {
+    @Parcel
+    public static class Memories {
 
         @SerializedName("message")
         @Expose
@@ -62,12 +66,15 @@ public class Post {
         }
 
     }
-
-    public class Message {
+    @Parcel
+    public static   class Message {
 
         @SerializedName("postId")
         @Expose
         private String postId;
+        @SerializedName("isLiked")
+        @Expose
+        private boolean isLiked=false;
         @SerializedName("post")
         @Expose
         private String post;
@@ -89,6 +96,9 @@ public class Post {
         @SerializedName("likeCount")
         @Expose
         private String likeCount;
+        @SerializedName("commentCount")
+        @Expose
+        private String commentCount;
         @SerializedName("hasComment")
         @Expose
         private String hasComment;
@@ -231,6 +241,21 @@ public class Post {
             this.imageurls = imageurls;
         }
 
+        public String getCommentCount() {
+            return commentCount;
+        }
+
+        public void setCommentCount(String commentCount) {
+            this.commentCount = commentCount;
+        }
+
+        public boolean getIsLiked() {
+            return isLiked;
+        }
+
+        public void setIsLiked(boolean isLiked) {
+            this.isLiked = isLiked;
+        }
     }
 
 }

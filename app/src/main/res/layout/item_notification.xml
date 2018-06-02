@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/carview_id"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginBottom="5dp"
+    android:background="@color/cardview_dark_background"
+    app:cardElevation="2dp">
+
+    <RelativeLayout
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/activity_profile_single"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:foregroundGravity="center"
+            android:src="@drawable/img_default_user"
+            />
+
+
+        <TextView
+            android:id="@+id/activity_title_single"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/activity_profile_single"
+            android:fontFamily="sans-serif-condensed"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="Notification Title"
+            android:textAllCaps="false"
+            android:textColor="@color/cardview_dark_background"
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/activity_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/activity_profile_single"
+            android:fontFamily="sans-serif-condensed"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_below="@+id/activity_title_single"
+            android:text=""
+            android:textSize="16sp"
+            android:textAllCaps="false"
+            />
+
+        <TextView
+            android:id="@+id/activity_date_single"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/activity_body"
+            android:layout_toEndOf="@+id/activity_profile_single"
+            android:layout_toRightOf="@+id/activity_profile_single"
+            android:paddingLeft="16dp"
+            android:textSize="12sp"
+            android:layout_marginTop="5dp"
+            android:text="Notification Date" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

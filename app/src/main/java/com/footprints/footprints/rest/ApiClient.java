@@ -9,8 +9,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient extends Activity {
-    // private static final String BASE_URL = "http://10.0.2.2/footprints/public/";
-   public static final String BASE_URL = "http://192.168.50.100/footprints/public/";
+    // public static final String BASE_URL = "http://10.0.2.2/footprints/public/";
+   public static final String BASE_URL = "http://192.168.50.103/footprints/public/";
     private static Retrofit retrofit = null;
 
    /* private static Gson 2gson = new GsonBuilder()

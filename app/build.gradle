@@ -79,7 +79,9 @@ dependencies {
     implementation 'com.nineoldandroids:library:2.4.0'
     implementation 'com.daimajia.slider:library:1.1.5@aar'
 
-
+    // Parcels
+    implementation 'org.parceler:parceler-api:1.1.9'
+    annotationProcessor 'org.parceler:parceler:1.1.9'
 
     // End of application Dependencies
     implementation fileTree(include: ['*.jar'], dir: 'libs')

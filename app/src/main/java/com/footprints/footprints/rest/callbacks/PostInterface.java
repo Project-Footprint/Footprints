@@ -1,6 +1,7 @@
 package com.footprints.footprints.rest.callbacks;
 
 import com.footprints.footprints.activities.UploadMemories;
+import com.footprints.footprints.models.Comment;
 import com.footprints.footprints.models.Post;
 import com.footprints.footprints.models.UploadObject;
 
@@ -21,9 +22,20 @@ public interface PostInterface {
     @GET("app/retriveposts")
     Call<Post> retrivePosts(@QueryMap Map<String, String> params);
 
+    @GET("app/retrivepostsdetails")
+    Call<Post.Message> retrivepostsdetails(@QueryMap Map<String, String> params);
+
+
     @POST("app/uploadmultipleimages")
     Call<UploadObject> uploadMultiFile(@Body RequestBody file);
 
     @GET("app/retriveuserposts")
     Call<Post> retriveUserPosts(@QueryMap Map<String, String> params);
+
+
+    @GET("app/retrivetopcomment")
+    Call<Comment> retriveTopComment(@QueryMap Map<String, String> params);
+
+    @GET("app/retrivelowlevelcomment")
+    Call<Comment> retriveLowLevelComment(@QueryMap Map<String, String> params);
 }

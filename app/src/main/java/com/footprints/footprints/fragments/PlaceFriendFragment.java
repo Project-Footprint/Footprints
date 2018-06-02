@@ -33,7 +33,7 @@ import retrofit2.Response;
 
 public class PlaceFriendFragment extends Fragment {
     RecyclerView memoriesRecyclerView;
-    MemoriesAdapter memoriesAdapter;
+  public  static   MemoriesAdapter memoriesAdapter;
     List<Post.Message> posts = new ArrayList<>();
     Context context;
 
