@@ -15,7 +15,8 @@ public class ApiClient extends Activity {
 
    /* private static Gson 2gson = new GsonBuilder()
             .setLenient()
-            .create();*/
+            .create();
+            */
 
 
 
