@@ -1,6 +1,6 @@
 package com.footprints.footprints.rest.callbacks;
 
-import com.footprints.footprints.fragments.bottomsheets.BottomSheetComment;
+import com.footprints.footprints.models.AddComment;
 import com.footprints.footprints.models.AddLike;
 import com.footprints.footprints.models.PostCommentModel;
 
@@ -16,7 +16,7 @@ public interface ActionInterface {
     Call<Integer> unLike(@Body AddLike addLike);
 
     @POST("app/postcomment")
-    Call<PostCommentModel> postComment(@Body BottomSheetComment.AddComment addComment);
+    Call<PostCommentModel> postComment(@Body AddComment addComment);
 
 
 }

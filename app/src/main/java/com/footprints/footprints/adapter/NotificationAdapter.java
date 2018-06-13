@@ -1,6 +1,8 @@
 package com.footprints.footprints.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +11,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.footprints.footprints.R;
+import com.footprints.footprints.activities.FullPostActivity;
+import com.footprints.footprints.activities.ProfileActivity;
 import com.footprints.footprints.controllers.AgoDateParse;
+import com.footprints.footprints.fragments.ProfilePostsFragment;
 import com.footprints.footprints.models.Notification;
 import com.footprints.footprints.rest.ApiClient;
 import com.squareup.picasso.NetworkPolicy;
@@ -96,6 +101,34 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 Picasso.with(context).load(ApiClient.BASE_URL+notification.getProfileUrl()).placeholder(R.drawable.img_default_user).into(holder.notificationFromImage);
             }
         });
+
+        holder.holder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(notification.getType().equals("1") || notification.getType().equals("2") || notification.getType().equals("3")){
+                    Intent intent = new Intent(context, FullPostActivity.class);
+                    Bundle args = new Bundle();
+                    args.putBoolean("fromNetwork",true);
+                    args.putString("postId",notification.getPostId());
+
+                    intent.putExtra("postBundel",args);
+                    context.startActivity(intent);
+                }else if(notification.getType().equals("4") || notification.getType().equals("5")){
+                    Intent intent = new Intent(context, ProfileActivity.class);
+                    intent.putExtra("uid", notification.getNotificationFrom());
+
+                    ProfilePostsFragment.isClearNeeded=false;
+                    ProfilePostsFragment.posts.clear();
+                    if(ProfilePostsFragment.memoriesAdapter!=null){
+                        ProfilePostsFragment.memoriesAdapter.notifyDataSetChanged();
+                    }
+
+
+                    context.startActivity(intent);
+                }
+            }
+        });
+
     }
 
     @Override

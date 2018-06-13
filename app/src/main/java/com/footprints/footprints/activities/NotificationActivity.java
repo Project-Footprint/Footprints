@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.footprints.footprints.R;
@@ -35,6 +36,7 @@ public class NotificationActivity extends AppCompatActivity {
     NotificationAdapter notificationAdapter;
     ArrayList<Notification> notifications = new ArrayList<>();
     Toolbar toolbar;
+    TextView defaultTextView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class NotificationActivity extends AppCompatActivity {
         notificationRecyclerView.setLayoutManager(layoutManager);
         notificationRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
         notificationAdapter = new NotificationAdapter(notifications, NotificationActivity.this);
+        defaultTextView = findViewById(R.id.defaultTextView);
 
         toolbar = (Toolbar) findViewById(R.id.notification_toolbar);
         setSupportActionBar(toolbar);
@@ -75,8 +78,14 @@ public class NotificationActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call<List<Notification>> call, Response<List<Notification>> response) {
                 if (response.body() != null) {
 
-                    notifications.addAll(response.body());
-                    notificationRecyclerView.setAdapter(notificationAdapter);
+                    if(response.body().size()>=1){
+                        notifications.addAll(response.body());
+                        notificationRecyclerView.setAdapter(notificationAdapter);
+                    }else{
+                        notificationRecyclerView.setVisibility(View.GONE);
+                        defaultTextView.setVisibility(View.VISIBLE);
+                    }
+
                     Log.d("CheckZie",response.body().size()+" ");
 
                 }

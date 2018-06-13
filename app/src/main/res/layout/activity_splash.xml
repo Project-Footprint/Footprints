@@ -15,13 +15,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/memories_7" />
+            android:src="@drawable/bg_proper" />
 
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:background="#a0ffffff"
+            android:layout_height="match_parent"
+
             android:layout_gravity="center">
 
 
@@ -30,9 +30,7 @@
                 android:id="@+id/app_theme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="50dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="75dp"
                 android:text="Things End.\nBut Memories last Forever.\nShare your memories\nWith the World."
                 android:textAlignment="center"
                 android:textColor="#000"

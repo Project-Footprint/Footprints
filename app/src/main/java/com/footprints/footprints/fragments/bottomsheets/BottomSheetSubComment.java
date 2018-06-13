@@ -31,6 +31,7 @@ import com.footprints.footprints.adapter.SubCommentAdapter;
 import com.footprints.footprints.controllers.VerticalNewsPaddingController;
 import com.footprints.footprints.fragments.PlaceFriendFragment;
 import com.footprints.footprints.fragments.ProfilePostsFragment;
+import com.footprints.footprints.models.AddComment;
 import com.footprints.footprints.models.Comment;
 import com.footprints.footprints.models.Post;
 import com.footprints.footprints.models.PostCommentModel;
@@ -148,7 +149,7 @@ public class BottomSheetSubComment extends BottomSheetDialogFragment {
                 commentEditBox.setText("");
                 ((InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 ActionInterface actionInterface = ApiClient.getApiClient().create(ActionInterface.class);
-                Call<PostCommentModel> call = actionInterface.postComment(new BottomSheetComment.AddComment(comment, FirebaseAuth.getInstance().getUid(),  post.getPostId(), commentModel.getCid(), "0", "1", post.getPostUserId(),commentModel.getCommentBy()));
+                Call<PostCommentModel> call = actionInterface.postComment(new AddComment(comment, FirebaseAuth.getInstance().getUid(),  post.getPostId(), commentModel.getCid(), "0", "1", post.getPostUserId(),commentModel.getCommentBy()));
                 call.enqueue(new Callback<PostCommentModel>() {
                     @Override
                     public void onResponse(@NonNull Call<PostCommentModel> call, Response<PostCommentModel> response) {
@@ -158,7 +159,10 @@ public class BottomSheetSubComment extends BottomSheetDialogFragment {
                             int commentCount = Integer.parseInt(post.getCommentCount());
                             commentCount++;
                             post.setCommentCount(commentCount + "");
-                            BottomSheetComment.comments_txt.setText(commentCount+" Comments");
+                            if(BottomSheetComment.comments_txt!=null){
+                                BottomSheetComment.comments_txt.setText(commentCount+" Comments");
+                            }
+
 
                             comments.add(response.body().getCommentModel());
                             int pos = comments.indexOf(response.body().getCommentModel());

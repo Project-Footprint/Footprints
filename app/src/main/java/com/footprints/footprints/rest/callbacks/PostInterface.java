@@ -23,7 +23,7 @@ public interface PostInterface {
     Call<Post> retrivePosts(@QueryMap Map<String, String> params);
 
     @GET("app/retrivepostsdetails")
-    Call<Post.Message> retrivepostsdetails(@QueryMap Map<String, String> params);
+    Call<Post> retrivepostsdetails(@QueryMap Map<String, String> params);
 
 
     @POST("app/uploadmultipleimages")

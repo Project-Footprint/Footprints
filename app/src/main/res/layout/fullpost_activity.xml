@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/top_hide_show"
     android:background="@drawable/radius_controller"
     android:focusableInTouchMode="true">
 
@@ -18,8 +19,8 @@
         android:id="@+id/tooop_nested"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/fullpost_toolbar"
-        android:layout_above="@+id/comment_bottom_part">
+        android:layout_above="@+id/comment_bottom_part"
+        android:layout_below="@id/fullpost_toolbar">
 
         <RelativeLayout
 
@@ -48,7 +49,9 @@
                     android:layout_toEndOf="@+id/extra_imageView"
                     android:layout_toRightOf="@+id/extra_imageView"
                     android:paddingLeft="10dp"
-                    android:text="User Name will be here" />
+                    android:textColor="#747fe9"
+                    android:textStyle="bold"
+                    android:text="" />
 
                 <LinearLayout
                     android:id="@+id/extra_dateSection"
@@ -84,13 +87,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/extra_imageView"
+                    android:layout_marginBottom="5dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="16dp"
                     android:layout_marginStart="10dp"
                     android:text="User Sayings top"
                     android:textSize="13sp"
-                    android:layout_marginBottom="5dp"
                     android:textStyle="italic"
                     android:transitionName="" />
 
@@ -193,13 +196,14 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/commts_rcy"
+                android:id="@+id/fullpost_commts_rcy"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/reaction_card"
+                android:layout_marginTop="10dp"
                 android:background="#FAFAFA"
                 android:isScrollContainer="false"
-                android:minHeight="300dp" />
+                android:maxHeight="500dp" />
 
 
         </RelativeLayout>

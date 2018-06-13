@@ -61,7 +61,6 @@ public class ProfilePostsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("FetchReveiw", "onStart");
         getMemoriesPost();
     }
 
@@ -75,19 +74,11 @@ public class ProfilePostsFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Post> call, Response<Post> response) {
                 if (response.body() != null) {
-                    if (response.raw().cacheResponse() != null) {
-                        Log.d("checkCache", "From Cache Inside Memoreis  ");
-                    } else if (response.raw().networkResponse() != null) {
-                        Log.d("checkCache", "Network call Inside Memoreis ");
-                    } else {
-                        Log.d("checkCache", "Unknown Inside Memoreis ");
-                    }
+
                     if (response.body().getMemories().getSuccess() == 1) {
                         posts.addAll(response.body().getMemories().getMessage());
-                        Log.d("FetchReveiw", "Got IT");
+
                         memoriesRecyclerView.setAdapter(memoriesAdapter);
-                    } else {
-                        Log.d("FetchReveiw", "Couldn't Got it");
                     }
                 }
 
@@ -96,7 +87,7 @@ public class ProfilePostsFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
-                Toast.makeText(context, "Review Failed... Please Retry !", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Something went wrong !", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -104,7 +95,7 @@ public class ProfilePostsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        Log.d("FetchReveiw", "onStop");
+
         if(isClearNeeded){
             posts.clear();
             memoriesAdapter.notifyDataSetChanged();

@@ -31,6 +31,7 @@ import com.footprints.footprints.adapter.CommentAdapter;
 import com.footprints.footprints.controllers.VerticalNewsPaddingController;
 import com.footprints.footprints.fragments.PlaceFriendFragment;
 import com.footprints.footprints.fragments.ProfilePostsFragment;
+import com.footprints.footprints.models.AddComment;
 import com.footprints.footprints.models.Comment;
 import com.footprints.footprints.models.Post;
 import com.footprints.footprints.models.PostCommentModel;
@@ -62,7 +63,7 @@ public class BottomSheetComment extends BottomSheetDialogFragment {
     CommentAdapter commentAdapter;
     boolean flagFab = true;
     RelativeLayout commentRel;
-  public  static   TextView comments_txt;
+    public static TextView comments_txt;
     int position = 0;
 
     @Override
@@ -83,9 +84,6 @@ public class BottomSheetComment extends BottomSheetDialogFragment {
         commentEditBox = holder.findViewById(R.id.comment_edt);
         commentSend = holder.findViewById(R.id.comment_send_img);
         comments_txt = holder.findViewById(R.id.comments_txt);
-
-
-
         commentRel = (RelativeLayout) holder.findViewById(R.id.chat_send_rel);
         commentSendImagebtn = (ImageView) holder.findViewById(R.id.comment_send_img);
 
@@ -100,7 +98,7 @@ public class BottomSheetComment extends BottomSheetDialogFragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         commentRecyclerView.setLayoutManager(layoutManager);
         commentRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
-        commentAdapter = new CommentAdapter(comments, context,post,position);
+        commentAdapter = new CommentAdapter(comments, context, post, position);
 
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -127,7 +125,7 @@ public class BottomSheetComment extends BottomSheetDialogFragment {
                 commentEditBox.setText("");
                 ((InputMethodManager) getContext().getSystemService(getContext().INPUT_METHOD_SERVICE)).toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 ActionInterface actionInterface = ApiClient.getApiClient().create(ActionInterface.class);
-                Call<PostCommentModel> call = actionInterface.postComment(new AddComment(comment, FirebaseAuth.getInstance().getUid(), "0", post.getPostId(), "0", "0", post.getPostUserId(),""));
+                Call<PostCommentModel> call = actionInterface.postComment(new AddComment(comment, FirebaseAuth.getInstance().getUid(), "0", post.getPostId(), "0", "0", post.getPostUserId(), ""));
                 call.enqueue(new Callback<PostCommentModel>() {
                     @Override
                     public void onResponse(@NonNull Call<PostCommentModel> call, Response<PostCommentModel> response) {
@@ -220,29 +218,7 @@ public class BottomSheetComment extends BottomSheetDialogFragment {
         });
     }
 
-    public static class AddComment {
-        String comment;
-        String commentBy;
-        String superParentId;
-        String parentId;
-        String hasSubComment;
-        String level;
-        String postUserId;
-        String commentUserId;
 
-
-        AddComment(String comment, String commentBy, String superParentId, String parentId, String hasSubComment, String level, String postUserId,String commentUserId) {
-            this.comment = comment;
-            this.commentBy = commentBy;
-            this.superParentId = superParentId;
-            this.parentId = parentId;
-            this.hasSubComment = hasSubComment;
-            this.level = level;
-            this.postUserId = postUserId;
-            this.commentUserId = commentUserId;
-
-        }
-    }
 
     public void ImageViewAnimatedChange(Context c, final ImageView v, final Drawable new_image) {
         final Animation anim_out = AnimationUtils.loadAnimation(c, R.anim.zoom_out);

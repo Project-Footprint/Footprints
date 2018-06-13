@@ -11,12 +11,20 @@
         style="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title=""/>
+        app:title="" />
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/notification_recy"
-        android:layout_below="@id/notification_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/notification_toolbar" />
+
+    <TextView
+        android:id="@+id/defaultTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="All Notification caught up !\n Have a nice day "
+        android:visibility="gone" />
 </RelativeLayout>
