@@ -1,4 +1,4 @@
-# Footprints ScreenShots
+# Footprints Finder ( Memories Finder )  ScreenShots
 ![screenshot_20180602-222833](https://user-images.githubusercontent.com/38103583/43353488-0349e9e8-925a-11e8-854a-58411c2c63b3.png)
 ![sc_1](https://user-images.githubusercontent.com/38103583/43353495-0eace254-925a-11e8-9694-bbbe39d73cc1.png)
 ![sc_2](https://user-images.githubusercontent.com/38103583/43353497-145e237a-925a-11e8-8091-f9c0d4600a14.png)
