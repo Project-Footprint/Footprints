@@ -15,7 +15,6 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.QueryMap;
 
-/*test */
 public interface UsersInterface {
 
     @GET("app/users")

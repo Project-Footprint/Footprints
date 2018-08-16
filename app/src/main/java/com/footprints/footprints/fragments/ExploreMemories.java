@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ import com.footprints.footprints.R;
 import com.footprints.footprints.activities.PlaceActivity;
 import com.footprints.footprints.controllers.MultiDrawable;
 import com.footprints.footprints.controllers.NetworkDetectController;
+import com.footprints.footprints.controllers.test.NetworkConnectionActivity;
 import com.footprints.footprints.models.Addresses;
 import com.footprints.footprints.models.Person;
 import com.footprints.footprints.rest.ApiClient;
@@ -83,46 +85,56 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
 
     private GoogleMap mMap;
     private static final int REQUEST_LOCATION = 1;
-    public static  String lattitude, longitude;
-
+    public static String lattitude, longitude;
+    Button bind;
 
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
     LocationCallback locationCallback;
     private ClusterManager<Person> mClusterManager;
     FragmentActivity context;
-    public static Double lattitudeDouble,longitudeDouble;
+    public static Double lattitudeDouble, longitudeDouble;
 
     static int cacheSize = 10 * 1024 * 1024; // 10 MB
 
-   public   static Cache cache;
+    public static Cache cache;
+
     public ExploreMemories() {
         // Required empty public constructor
     }
-    public static  boolean isNetwork = false;
+
+    public static boolean isNetwork = false;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = (FragmentActivity) context;
         isNetwork = NetworkDetectController.checkConnection(context);
-        cache= new Cache(context.getCacheDir(), cacheSize);
+        cache = new Cache(context.getCacheDir(), cacheSize);
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
-        return inflater.inflate(R.layout.fragment_explore_memories, container, false);
+        View view = inflater.inflate(R.layout.fragment_explore_memories, container, false);
+        bind = view.findViewById(R.id.bind);
+        bind.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context,NetworkConnectionActivity.class));
+            }
+        });
+        return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
         ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-        SupportMapFragment mapFragment = (SupportMapFragment)getChildFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+
         mapFragment.getMapAsync(ExploreMemories.this);
     }
 
@@ -140,7 +152,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
         mClusterManager.setOnClusterClickListener(this);
         mClusterManager.setOnClusterInfoWindowClickListener(this);
         mClusterManager.setOnClusterItemClickListener(this);
-   //     mClusterManager.setOnClusterItemInfoWindowClickListener(this);
+        //     mClusterManager.setOnClusterItemInfoWindowClickListener(this);
 
 
         Log.d("LogTracker4", "onMapReady");
@@ -150,7 +162,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
-         mMap.setMinZoomPreference(11f);
+        mMap.setMinZoomPreference(11f);
 
         mMap.getUiSettings().setRotateGesturesEnabled(true);
         mMap.getUiSettings().setScrollGesturesEnabled(true);
@@ -172,7 +184,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
     }
 
     protected synchronized void buildGoogleApiClient() {
-        Log.d("LogTracker4", "buildGoogleApiClient");
+
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -233,13 +245,17 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
     public void onLocationChanged(Location location) {
         Log.d("LogTracker4", "onLocationChanged");
         // New location has now been determined
-        //String msg = "Updated Location: " + Double.toString(location.getLatitude()) + "," + Double.toString(location.getLongitude());
-        // Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+
+        String msg = "Updated Location: " + Double.toString(location.getLatitude()) + "," + Double.toString(location.getLongitude());
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+
+
         // You can now create a LatLng Object for use with maps
         lattitude = String.valueOf(location.getLatitude());
         longitude = String.valueOf(location.getLongitude());
 
-        lattitudeDouble  = location.getLatitude();
+        lattitudeDouble = location.getLatitude();
         longitudeDouble = location.getLongitude();
 
         Map<String, String> params = new HashMap<String, String>();
@@ -269,7 +285,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
                         double log = Double.parseDouble(response.body().get(i).getLon());
                         String markerTitle = response.body().get(i).getName();
                         String aid = response.body().get(i).getAid();
-                        String profileUrl = ApiClient.BASE_URL+response.body().get(i).getProfileUrl();
+                        String profileUrl = ApiClient.BASE_URL + response.body().get(i).getProfileUrl();
 
                         LatLng sydney = new LatLng(lat, log);
                         MarkerOptions markerOptions = new MarkerOptions();
@@ -453,8 +469,6 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
     }
 
 
-
-
     @Override
     public boolean onClusterClick(Cluster<Person> cluster) {
         // Show a toast with some info when the cluster is clicked.
@@ -498,8 +512,8 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
 
             Intent intent = new Intent(context, PlaceActivity.class);
             intent.putExtra("name", cluster.getItems().iterator().next().name);
-            intent.putExtra("latitude", cluster.getItems().iterator().next().getPosition().latitude+"");
-            intent.putExtra("longitude", cluster.getItems().iterator().next().getPosition().longitude+"");
+            intent.putExtra("latitude", cluster.getItems().iterator().next().getPosition().latitude + "");
+            intent.putExtra("longitude", cluster.getItems().iterator().next().getPosition().longitude + "");
             startActivity(intent);
             //Toast.makeText(context,"Inside if ",Toast.LENGTH_SHORT).show();
 
@@ -538,52 +552,6 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
     }
 
 
-    public class PoiLatLog implements ClusterItem {
-
-        String lat;
-        String lon;
-        String name;
-        String placeId;
-
-        private LatLng mPosition;
-        private String mTitle;
-        private String mSnippet;
-
-
-        PoiLatLog(String name, String lat, String log, String placeId, double lattitude, double logitude) {
-            this.lat = lat;
-            this.lon = log;
-            this.name = name;
-            this.placeId = placeId;
-
-
-            mPosition = new LatLng(lattitude, logitude);
-            this.mTitle = name;
-            this.mSnippet = name;
-        }
-
-        public PoiLatLog(LatLng mPosition, String mTitle, String mSnippet) {
-            this.mPosition = mPosition;
-            this.mTitle = mTitle;
-            this.mSnippet = mSnippet;
-        }
-
-        @Override
-        public LatLng getPosition() {
-            return this.mPosition;
-        }
-
-        @Override
-        public String getTitle() {
-            return this.mTitle;
-        }
-
-        @Override
-        public String getSnippet() {
-            return this.mSnippet;
-        }
-    }
-
     public class AddPoi {
         String lat;
         String lon;
@@ -599,7 +567,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mGoogleApiClient!=null){
+        if (mGoogleApiClient != null) {
             mGoogleApiClient.disconnect();
         }
 
