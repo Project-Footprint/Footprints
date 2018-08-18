@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import com.footprints.footprints.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -44,6 +45,7 @@ public class FirebaseForgroundService extends FirebaseMessagingService {
 
         Intent intent = new Intent(clickAction);
         intent.putExtra("isNotification", "true");
+        Log.d("CheckClickAction",clickAction);
 
         PendingIntent resultPending = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);

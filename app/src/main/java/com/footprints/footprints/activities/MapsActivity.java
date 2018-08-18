@@ -1,10 +1,15 @@
 package com.footprints.footprints.activities;
 
 import android.app.ActivityOptions;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.footprints.footprints.R;
+import com.footprints.footprints.controllers.test.NetworkSchedulerService;
 import com.footprints.footprints.fragments.ExploreEvents;
 import com.footprints.footprints.fragments.ExploreMemories;
 import com.footprints.footprints.fragments.ExplorePlaces;
@@ -165,6 +171,7 @@ public class MapsActivity extends AppCompatActivity {
                 });
 
 
+       // scheduleJob();
     }
 
     private void getAccountBasicInfo(String uid) {
@@ -211,5 +218,38 @@ public class MapsActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.mainFramelayout, fragment);
         fragmentTransaction.commit();
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void scheduleJob() {
+        JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
+                .setRequiresCharging(true)
+                .setMinimumLatency(1000)
+                .setOverrideDeadline(2000)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(myJob);
+    }
+
+    @Override
+    protected void onStop() {
+        // A service can be "started" and/or "bound". In this case, it's "started" by this Activity
+        // and "bound" to the JobScheduler (also called "Scheduled" by the JobScheduler). This call
+        // to stopService() won't prevent scheduled jobs to be processed. However, failing
+        // to call stopService() would keep it alive indefinitely.
+        stopService(new Intent(this, NetworkSchedulerService.class));
+        super.onStop();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Start service and provide it a way to communicate with this class.
+        Intent startServiceIntent = new Intent(this, NetworkSchedulerService.class);
+        startService(startServiceIntent);
     }
 }

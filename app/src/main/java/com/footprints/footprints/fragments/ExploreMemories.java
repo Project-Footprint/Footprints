@@ -24,7 +24,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,7 +31,7 @@ import com.footprints.footprints.R;
 import com.footprints.footprints.activities.PlaceActivity;
 import com.footprints.footprints.controllers.MultiDrawable;
 import com.footprints.footprints.controllers.NetworkDetectController;
-import com.footprints.footprints.controllers.test.NetworkConnectionActivity;
+import com.footprints.footprints.controllers.SharedPreferenceController;
 import com.footprints.footprints.models.Addresses;
 import com.footprints.footprints.models.Person;
 import com.footprints.footprints.rest.ApiClient;
@@ -86,7 +85,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
     private GoogleMap mMap;
     private static final int REQUEST_LOCATION = 1;
     public static String lattitude, longitude;
-    Button bind;
+
 
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
@@ -119,19 +118,14 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
         // Inflate the layout for this fragment
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         View view = inflater.inflate(R.layout.fragment_explore_memories, container, false);
-        bind = view.findViewById(R.id.bind);
-        bind.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(context,NetworkConnectionActivity.class));
-            }
-        });
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        SharedPreferenceController.saveInOut(context,false);
         ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 
@@ -248,7 +242,7 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
 
 
         String msg = "Updated Location: " + Double.toString(location.getLatitude()) + "," + Double.toString(location.getLongitude());
-        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
 
 
         // You can now create a LatLng Object for use with maps
@@ -257,6 +251,8 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
 
         lattitudeDouble = location.getLatitude();
         longitudeDouble = location.getLongitude();
+
+        SharedPreferenceController.saveUserLocation(context,lattitudeDouble,longitudeDouble);
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("lattitude", lattitude);
@@ -677,4 +673,9 @@ public class ExploreMemories extends Fragment implements OnMapReadyCallback, Goo
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        SharedPreferenceController.saveInOut(context,true);
+    }
 }

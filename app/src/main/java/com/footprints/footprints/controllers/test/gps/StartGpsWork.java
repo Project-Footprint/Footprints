@@ -1,4 +1,4 @@
-package com.footprints.footprints.controllers.test;
+package com.footprints.footprints.controllers.test.gps;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -7,25 +7,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 
-import com.footprints.footprints.R;
+import com.footprints.footprints.controllers.test.NetworkSchedulerService;
 
-public class NetworkConnectionActivity extends AppCompatActivity {
-
+public class StartGpsWork  extends AppCompatActivity{
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test);
-
-
-
+        scheduleJob();
     }
 
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void scheduleJob() {
+    public  void scheduleJob() {
         JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
                 .setRequiresCharging(true)
                 .setMinimumLatency(1000)

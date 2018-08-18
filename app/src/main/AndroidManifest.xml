@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_footprints"
@@ -29,7 +30,7 @@
             android:value="@string/google_maps_key" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/icon_like" />
+            android:resource="@mipmap/ic_launcher_footprints" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorPrimary" />
@@ -43,12 +44,20 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="com.footprints.footprints.OPEN_ACTIVITY_1" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <intent-filter>
+
+                <action android:name="com.footprints.footprints.OPEN_ACTIVITY_3" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
         </activity>
+
+
         <activity
             android:name=".appintro.Splash"
             android:label="Footprints"
@@ -137,6 +146,18 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".controllers.test.gps.StartGpsWork"
+           >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
+
+
 
         <service android:name=".controllers.FirebaseForgroundService">
             <intent-filter>
@@ -154,6 +175,14 @@
         <receiver android:name=".controllers.NetworkChangeReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+
+        <receiver android:name=".controllers.test.gps.GpsLocationReceiver">
+            <intent-filter>
+                <action android:name="android.location.PROVIDERS_CHANGED" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
 

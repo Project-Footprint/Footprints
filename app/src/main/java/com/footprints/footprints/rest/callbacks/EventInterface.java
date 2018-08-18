@@ -1,5 +1,6 @@
 package com.footprints.footprints.rest.callbacks;
 
+import com.footprints.footprints.controllers.test.gps.GpsLocationReceiver;
 import com.footprints.footprints.fragments.ExploreEvents;
 import com.footprints.footprints.models.Event;
 
@@ -19,4 +20,8 @@ public interface EventInterface  {
 
     @GET("app/retriveevent")
     Call<List<Event>> retriveEvents(@QueryMap Map<String, String> params);
+
+    @POST("app/checknewevent")
+    Call<Integer> checkNewEvent(@Body GpsLocationReceiver.NewEventModel newEventModel);
+
 }
