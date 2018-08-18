@@ -157,6 +157,15 @@
 
         </activity>
 
+        <activity
+            android:name=".activities.SearchResultsActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+        </activity>
 
 
         <service android:name=".controllers.FirebaseForgroundService">
