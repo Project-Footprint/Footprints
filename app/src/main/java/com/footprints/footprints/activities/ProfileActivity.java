@@ -111,12 +111,12 @@ public class ProfileActivity extends AppCompatActivity implements ViewPager.OnPa
 
 
         mViewPager = findViewById(R.id.ViewPager_profile);
-        mTabLayout = findViewById(R.id.profile_tab_profile);
+      //  mTabLayout = findViewById(R.id.profile_tab_profile);
 
         profileViewPagerAdapter = new ProfileViewPagerAdapter(getSupportFragmentManager(), 1, this);
         mViewPager.setAdapter(profileViewPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
-        mTabLayout.setupWithViewPager(mViewPager);
+       // mTabLayout.setupWithViewPager(mViewPager);
         pofile_option_btn = findViewById(R.id.pofile_option_btn);
 
         if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(uid)) {

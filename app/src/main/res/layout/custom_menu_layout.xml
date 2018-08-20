@@ -49,6 +49,7 @@
             android:src="@drawable/search_icon"/>
 
         <EditText
+            android:id="@+id/search_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Search"
@@ -58,7 +59,9 @@
             android:paddingBottom="5dp"
             android:paddingEnd="0dp"
             android:textColor="#000"
+            android:imeOptions="actionSearch"
             android:maxLines="1"
+            android:inputType="text"
             android:textColorHint="#71000000" />
     </LinearLayout>
 

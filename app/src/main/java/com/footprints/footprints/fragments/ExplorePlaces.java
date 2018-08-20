@@ -15,9 +15,11 @@ import android.widget.ListView;
 
 import com.footprints.footprints.R;
 import com.footprints.footprints.activities.PlaceActivity;
+import com.footprints.footprints.controllers.SharedPreferenceController;
 import com.footprints.footprints.models.Addresses;
 import com.footprints.footprints.rest.ApiClient;
 import com.footprints.footprints.rest.callbacks.AddressInterface;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,8 +65,9 @@ public class ExplorePlaces extends Fragment {
 
     private void getRecommendationPlaces() {
         Map<String, String> params = new HashMap<String, String>();
-        params.put("lattitude", ExploreMemories.lattitude);
-        params.put("lognitude", ExploreMemories.longitude);
+        LatLng latLng = SharedPreferenceController.getUserLocation(context);
+        params.put("lattitude", latLng.latitude+"");
+        params.put("lognitude", latLng.longitude+"");
 
         AddressInterface addressInterface = ApiClient.getApiClient().create(AddressInterface.class);
         Call<List<Addresses>> call = addressInterface.getRecommendationAddresses(params);
@@ -109,13 +112,13 @@ public class ExplorePlaces extends Fragment {
 
     }
 
+
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         if(adapter!=null){
             arrayList.clear();
             adapter.notifyDataSetChanged();
         }
-
     }
 }

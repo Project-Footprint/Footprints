@@ -158,7 +158,10 @@
         </activity>
 
         <activity
-            android:name=".activities.SearchResultsActivity">
+            android:name=".activities.SearchResultsActivity"
+            android:label="Search Result"
+            android:parentActivityName=".activities.MapsActivity"
+            >
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

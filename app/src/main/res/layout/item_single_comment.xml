@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="8"
-                android:textColor="#747fe9"
+                android:textColor="#000"
                 android:text="Commented Person"
                 android:textStyle="bold" />
 
@@ -176,7 +176,7 @@
                     android:layout_toRightOf="@+id/sub_comment_profile_2"
                     android:text="Sub Commented Person"
                     android:textSize="12sp"
-                    android:textColor="#747fe9"
+                    android:textColor="#000"
                     android:textStyle="bold" />
 
                 <TextView

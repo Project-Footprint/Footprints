@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.footprints.footprints.R;
@@ -37,6 +38,11 @@ public class PlaceFriendFragment extends Fragment {
     List<Post.Message> posts = new ArrayList<>();
     Context context;
 
+    int limit = 3;
+    int offset = 0;
+    boolean isFromStart = true;
+    ProgressBar progressBar;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -55,22 +61,51 @@ public class PlaceFriendFragment extends Fragment {
         memoriesRecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
         memoriesAdapter = new MemoriesAdapter(posts, context);
 
+        progressBar = view.findViewById(R.id.feedProgressBar);
 
+        memoriesRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                LinearLayoutManager mLayoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
+                int visibleItemCount = mLayoutManager.getChildCount();
+                int totalItemCount = mLayoutManager.getItemCount();
+                int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
+
+
+                if (pastVisibleItems + visibleItemCount == (totalItemCount)) {
+                    isFromStart=false;
+                    progressBar.setVisibility(View.VISIBLE);
+                    offset = offset+limit;
+                    getMemoriesPost(limit,offset);
+
+
+                }
+
+
+            }
+        });
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        getMemoriesPost();
+        isFromStart = true;
+        offset=0;
+        getMemoriesPost(limit,offset);
     }
 
-    private void getMemoriesPost() {
+    private void getMemoriesPost(int limit,int offset) {
         PostInterface postInterface = ApiClient.getApiClient().create(PostInterface.class);
         Map<String, String> params = new HashMap<String, String>();
+
         params.put("lattitude", PlaceActivity.latitude);
         params.put("longnitude", PlaceActivity.longitude);
         params.put("uid", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        params.put("limit", String.valueOf(limit));
+        params.put("offset", String.valueOf(offset));
+
         Call<Post> call = postInterface.retrivePosts(params);
         call.enqueue(new Callback<Post>() {
             @Override
@@ -84,9 +119,17 @@ public class PlaceFriendFragment extends Fragment {
                         Log.d("checkCache", "Unknown Inside Memoreis ");
                     }
                     if (response.body().getMemories().getSuccess() == 1) {
-                        posts.addAll(response.body().getMemories().getMessage());
-                        Log.d("FetchReveiw","Got IT");
-                        memoriesRecyclerView.setAdapter(memoriesAdapter);
+                        if(isFromStart){
+                            posts.addAll(response.body().getMemories().getMessage());
+                            memoriesRecyclerView.setAdapter(memoriesAdapter);
+                        }else{
+                            if(progressBar!=null){
+                                progressBar.setVisibility(View.GONE);
+                            }
+                            posts.addAll(response.body().getMemories().getMessage());
+                            memoriesAdapter.notifyDataSetChanged();
+                        }
+
                     } else {
                         Log.d("FetchReveiw","Couldn't Got it");
                     }

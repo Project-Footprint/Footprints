@@ -19,18 +19,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Pair;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.footprints.footprints.R;
+import com.footprints.footprints.controllers.BottomNavigationViewHelper;
 import com.footprints.footprints.controllers.test.NetworkSchedulerService;
 import com.footprints.footprints.fragments.ExploreEvents;
 import com.footprints.footprints.fragments.ExploreMemories;
 import com.footprints.footprints.fragments.ExplorePlaces;
+import com.footprints.footprints.fragments.NewsFeed;
 import com.footprints.footprints.models.User;
 import com.footprints.footprints.rest.ApiClient;
 import com.footprints.footprints.rest.callbacks.UsersInterface;
@@ -50,9 +57,11 @@ import retrofit2.Response;
 public class MapsActivity extends AppCompatActivity {
 
     FrameLayout frameLayout;
+
     private ExploreEvents exploreEvents;
     private ExploreMemories exploreMemories;
     private ExplorePlaces explorePlaces;
+    private NewsFeed exploreNewsFeed;
 
     Toolbar toolbar;
     private LayoutInflater layoutInflater;
@@ -60,7 +69,7 @@ public class MapsActivity extends AppCompatActivity {
     public static String profileImage = "";
     BottomNavigationView bottomNavigationView;
     private ImageView notificationImageView;
-
+    private EditText searchEditText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +84,7 @@ public class MapsActivity extends AppCompatActivity {
         exploreEvents = new ExploreEvents();
         exploreMemories = new ExploreMemories();
         explorePlaces = new ExplorePlaces();
+        exploreNewsFeed = new NewsFeed();
 
 
 
@@ -97,7 +107,38 @@ public class MapsActivity extends AppCompatActivity {
                 startActivity(new Intent(MapsActivity.this,NotificationActivity.class));
             }
         });
+        searchEditText = custumBarLayout.findViewById(R.id.search_edit);;
 
+
+
+       searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+           @Override
+           public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+               if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                   String keyword = searchEditText.getText().toString().trim();
+                   if(keyword.length()>0){
+
+                       searchEditText.setText("");
+                       searchEditText.clearFocus();
+                       InputMethodManager in = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                       in.hideSoftInputFromWindow(searchEditText.getWindowToken(), 0);
+
+                       Intent intent = new Intent(MapsActivity.this,SearchResultsActivity.class);
+                       intent.putExtra("keyword",keyword);
+                       startActivity(intent);
+
+                       return true;
+
+                   }else{
+                       Toast.makeText(MapsActivity.this,"Please Enter Something ",Toast.LENGTH_SHORT).show();
+                   }
+
+
+
+               }
+               return false;
+           }
+       });
         getAccountBasicInfo(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         profieImage.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +166,7 @@ public class MapsActivity extends AppCompatActivity {
         bottomNavigationView.setItemBackgroundResource(R.color.colorPrimary);
         bottomNavigationView.setItemTextColor(ContextCompat.getColorStateList(bottomNavigationView.getContext(), R.color.nav_item_colors));
         bottomNavigationView.setItemIconTintList(ContextCompat.getColorStateList(bottomNavigationView.getContext(), R.color.nav_item_colors));
+        BottomNavigationViewHelper.removeShiftMode(bottomNavigationView);
 
         Bundle bundle = getIntent().getExtras();
         String isFromNotification = "false";
@@ -136,10 +178,10 @@ public class MapsActivity extends AppCompatActivity {
              //   bottomNavigationView.getMenu().findItem(R.id.explore_notification).setChecked(true);
                 startActivity(new Intent(MapsActivity.this,NotificationActivity.class));
             } else {
-                setFragment(exploreMemories);
+                setFragment(exploreNewsFeed);
             }
         } else {
-            setFragment(exploreMemories);
+            setFragment(exploreNewsFeed);
         }
 
 
@@ -148,6 +190,9 @@ public class MapsActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
+                            case R.id.explore_newsfeed:
+                                setFragment(exploreNewsFeed);
+                                break;
                             case R.id.explore_memories:
                                 // bottomNavigationView.setItemBackgroundResource(R.color.colorPrimary);
                                 setFragment(exploreMemories);

@@ -24,6 +24,7 @@ import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.DefaultSliderView;
 import com.footprints.footprints.R;
 import com.footprints.footprints.activities.FullPostActivity;
+import com.footprints.footprints.activities.PlaceActivity;
 import com.footprints.footprints.activities.ProfileActivity;
 import com.footprints.footprints.controllers.AgoDateParse;
 import com.footprints.footprints.controllers.ControllerPixels;
@@ -76,6 +77,12 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
             holder.memoryStatus.setVisibility(View.GONE);
         }
         holder.personName.setText(message.getName());
+        if(message.getPlaceName()!=null){
+            holder.memory_place_name.setVisibility(View.VISIBLE);
+            holder.memory_place_name_at.setVisibility(View.VISIBLE);
+            holder.memory_place_name.setText(message.getPlaceName());
+        }
+
 
         if (message.getPrivacy().equals("0")) {
             holder.privacy_icon.setImageResource(R.drawable.icon_friends);
@@ -223,6 +230,18 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
 
                 context.startActivity(intent);
 
+            }
+        });
+
+        holder.memory_place_name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(context, PlaceActivity.class);
+                intent.putExtra("name", message.getPlaceName());
+                intent.putExtra("latitude", message.getLat());
+                intent.putExtra("longitude", message.getLon());
+                context.startActivity(intent);
             }
         });
         holder.likeSection.setOnClickListener(new View.OnClickListener() {
@@ -394,7 +413,7 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
 
         View holder;
         ImageView memoryImage, personImage, likeImage, commentImage, privacy_icon;
-        TextView personName, memoryDate, memoryStatus;
+        TextView personName, memoryDate, memoryStatus,memory_place_name,memory_place_name_at;
         SliderLayout sliderLayout;
         LinearLayout likeSection, commentSection;
         TextView likeTxt, commentTxt;
@@ -403,9 +422,19 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
         ViewHolder(View itemView) {
             super(itemView);
             holder = itemView;
+          //  ( (CardView) holder).setPreventCornerOverlap(false);
+
+
+          /*  ( (CardView) holder).setPadding(0,0,0,0);
+            ( (CardView) holder).setUseCompatPadding(true);
+            ( (CardView) holder).setContentPadding(0,0,0,0);*/
+
+           // ( (CardView) holder).setUseCompatPadding(false);
 
             memoryImage = holder.findViewById(R.id.memory_image);
             personName = holder.findViewById(R.id.memory_people_name);
+            memory_place_name = holder.findViewById(R.id.memory_place_name);
+            memory_place_name_at = holder.findViewById(R.id.memory_place_name_at);
             personImage = holder.findViewById(R.id.memory_people_image);
             memoryDate = holder.findViewById(R.id.memory_date);
             memoryStatus = holder.findViewById(R.id.post);

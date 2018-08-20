@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="#fff"
+    android:layout_margin="0dp"
+    android:padding="0dp"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/memories_recy"
+        android:id="@+id/newsfeed"
         android:layout_width="match_parent"
+        android:background="#DCDEE3"
+        android:layout_margin="0dp"
+        android:padding="0dp"
         android:layout_above="@id/newsfeedProgressBar"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content" />
+
+
 
     <ProgressBar
-        android:id="@+id/feedProgressBar"
+        android:id="@+id/newsfeedProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="bottom|center"
         android:visibility="gone" />
-
 </RelativeLayout>

@@ -38,4 +38,8 @@ public interface PostInterface {
 
     @GET("app/retrivelowlevelcomment")
     Call<Comment> retriveLowLevelComment(@QueryMap Map<String, String> params);
+
+    @GET("app/gettimelinepost")
+    Call<Post> getGetTimelinePost(@QueryMap Map<String, String> params);
+
 }

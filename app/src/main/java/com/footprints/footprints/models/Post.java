@@ -117,6 +117,15 @@ public class Post {
         @SerializedName("userToken")
         @Expose
         private String userToken;
+        @SerializedName("placeName")
+        @Expose
+        private String placeName;
+        @SerializedName("lat")
+        @Expose
+        private String lat;
+        @SerializedName("lon")
+        @Expose
+        private String lon;
         @SerializedName("imageurls")
         @Expose
         private List<Imageurl> imageurls = null;
@@ -161,12 +170,36 @@ public class Post {
             this.hasImage = hasImage;
         }
 
+        public String getLat() {
+            return lat;
+        }
+
+        public void setLat(String lat) {
+            this.lat = lat;
+        }
+
+        public String getLon() {
+            return lon;
+        }
+
+        public void setLon(String lon) {
+            this.lon = lon;
+        }
+
         public String getHasMultipleImage() {
             return hasMultipleImage;
         }
 
         public void setHasMultipleImage(String hasMultipleImage) {
             this.hasMultipleImage = hasMultipleImage;
+        }
+
+        public String getPlaceName() {
+            return placeName;
+        }
+
+        public void setPlaceName(String placeName) {
+            this.placeName = placeName;
         }
 
         public String getStatusTime() {

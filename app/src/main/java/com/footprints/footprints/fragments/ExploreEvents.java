@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.footprints.footprints.R;
 import com.footprints.footprints.adapter.EventAdpater;
 import com.footprints.footprints.controllers.ControllerPixels;
+import com.footprints.footprints.controllers.SharedPreferenceController;
 import com.footprints.footprints.models.Event;
 import com.footprints.footprints.models.MyItem;
 import com.footprints.footprints.rest.ApiClient;
@@ -119,6 +120,7 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
 
         return view;
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -129,57 +131,58 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
     }
 
     private void retriveEvents() {
-        if (ExploreMemories.lattitudeDouble != null && ExploreMemories.longitudeDouble != null) {
-            EventInterface postInterface = ApiClient.getApiClient().create(EventInterface.class);
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("lattitude", ExploreMemories.lattitude);
-            params.put("longnitude", ExploreMemories.longitude);
-            Call<List<Event>> call = postInterface.retriveEvents(params);
-            call.enqueue(new Callback<List<Event>>() {
-                @Override
-                public void onResponse(@NonNull Call<List<Event>> call, Response<List<Event>> response) {
-                    if(response.body() !=null) {
+
+        EventInterface postInterface = ApiClient.getApiClient().create(EventInterface.class);
+        Map<String, String> params = new HashMap<String, String>();
+        LatLng latLng = SharedPreferenceController.getUserLocation(context);
+        params.put("lattitude", latLng.latitude + "");
+        params.put("longnitude", latLng.longitude + "");
+        Call<List<Event>> call = postInterface.retriveEvents(params);
+        call.enqueue(new Callback<List<Event>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Event>> call, Response<List<Event>> response) {
+                if (response.body() != null) {
 
 
-                        if (response.raw().cacheResponse() != null) {
-                            Log.d("checkCache", "From Cache");
-                        } else if (response.raw().networkResponse() != null) {
-                            Log.d("checkCache", "Network call");
-                        } else {
-                            Log.d("checkCache", "Unknown");
-                        }
-                        for (int i = 0; i < response.body().size(); i++) {
-                            double lat = Double.parseDouble(response.body().get(i).getLat());
-                            double log = Double.parseDouble(response.body().get(i).getLog());
+                    if (response.raw().cacheResponse() != null) {
+                        Log.d("checkCache", "From Cache");
+                    } else if (response.raw().networkResponse() != null) {
+                        Log.d("checkCache", "Network call");
+                    } else {
+                        Log.d("checkCache", "Unknown");
+                    }
+                    for (int i = 0; i < response.body().size(); i++) {
+                        double lat = Double.parseDouble(response.body().get(i).getLat());
+                        double log = Double.parseDouble(response.body().get(i).getLog());
                        /* LatLng latLng = new LatLng(lat, log);
                         MarkerOptions markerOptions = new MarkerOptions();
                         markerOptions.title(response.body().get(i).getEname());
                         markerOptions.position(latLng);
                         mMap.addMarker(markerOptions);*/
-                            eventsLists.add(response.body().get(i));
-                            latlog.add(new LatLng(lat, log));
+                        eventsLists.add(response.body().get(i));
+                        latlog.add(new LatLng(lat, log));
 
-                            MyItem offsetItem = new MyItem(lat, log);
-                            mClusterManager.addItem(offsetItem);
-                            mClusterManager.cluster();
+                        MyItem offsetItem = new MyItem(lat, log);
+                        mClusterManager.addItem(offsetItem);
+                        mClusterManager.cluster();
 
-                        }
-                        for (int i = 0; i < eventsLists.size(); i++) {
-                            Log.d("checkuui", eventsLists.get(i).getEname());
-                            Log.d("checkuui", eventsLists.get(i).getEnddate());
-                            Log.d("checkuui", eventsLists.get(i).getLat());
-                        }
-                        eventAdpater = new EventAdpater(eventsLists, context, R.layout.item_custom_event);
-                        listView.setAdapter(eventAdpater);
                     }
+                    for (int i = 0; i < eventsLists.size(); i++) {
+                        Log.d("checkuui", eventsLists.get(i).getEname());
+                        Log.d("checkuui", eventsLists.get(i).getEnddate());
+                        Log.d("checkuui", eventsLists.get(i).getLat());
+                    }
+                    eventAdpater = new EventAdpater(eventsLists, context, R.layout.item_custom_event);
+                    listView.setAdapter(eventAdpater);
                 }
+            }
 
-                @Override
-                public void onFailure(Call<List<Event>> call, Throwable t) {
-                    Toast.makeText(context, "Events Retrival Failed... Please Retry !", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
+            @Override
+            public void onFailure(Call<List<Event>> call, Throwable t) {
+                Toast.makeText(context, "Events Retrival Failed... Please Retry !", Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     @Override
@@ -212,7 +215,7 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
 
                 float distanceInMetersOne = locationOne.distanceTo(locationCenter);
                 if (distanceInMetersOne < 5) {
-                   Toast.makeText(context,"Same",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Same", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -240,17 +243,18 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
 
             mMap.setMyLocationEnabled(true);
         }
-        if (ExploreMemories.lattitudeDouble != null && ExploreMemories.longitudeDouble != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(ExploreMemories.lattitudeDouble, ExploreMemories.longitudeDouble), 13f));
-            LatLng latLng = new LatLng(ExploreMemories.lattitudeDouble, ExploreMemories.longitudeDouble);
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        }
+
+        LatLng latLng = SharedPreferenceController.getUserLocation(context);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13f));
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
 
         mMap.setOnPoiClickListener(new GoogleMap.OnPoiClickListener() {
             @Override
             public void onPoiClick(PointOfInterest pointOfInterest) {
                 EventInterface postInterface = ApiClient.getApiClient().create(EventInterface.class);
-                Call<Integer> call = postInterface.addEvent(new AddEvents(pointOfInterest.latLng.latitude + "", pointOfInterest.latLng.longitude + "", pointOfInterest.name + " Events",pointOfInterest.name));
+                Call<Integer> call = postInterface.addEvent(new AddEvents(pointOfInterest.latLng.latitude + "", pointOfInterest.latLng.longitude + "", pointOfInterest.name + " Events", pointOfInterest.name));
                 call.enqueue(new Callback<Integer>() {
                     @Override
                     public void onResponse(@NonNull Call<Integer> call, Response<Integer> response) {
@@ -278,7 +282,7 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
         String name;
         String place;
 
-        public AddEvents(String lattitude, String longitude, String name,String place) {
+        public AddEvents(String lattitude, String longitude, String name, String place) {
             this.lattitude = lattitude;
             this.longnitude = longitude;
             this.name = name;
@@ -289,7 +293,7 @@ public class ExploreEvents extends Fragment implements OnMapReadyCallback {
     @Override
     public void onStop() {
         super.onStop();
-        if(eventAdpater!=null){
+        if (eventAdpater != null) {
             eventsLists.clear();
             latlog.clear();
             eventAdpater.notifyDataSetChanged();
