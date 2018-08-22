@@ -69,6 +69,40 @@ public class Post {
     @Parcel
     public static   class Message {
 
+
+        private int displaySize=100;
+
+
+        private int totalImageSize=200;
+
+        public int getTotalImageSize() {
+            return totalImageSize;
+        }
+
+        @SerializedName("myInfo")
+        @Expose
+        private String myInfo;
+
+        public String getMyInfo() {
+            return myInfo;
+        }
+
+        public void setMyInfo(String myInfo) {
+            this.myInfo = myInfo;
+        }
+
+        public void setTotalImageSize(int totalImageSize) {
+            this.totalImageSize = totalImageSize;
+        }
+
+        public int getDisplaySize() {
+            return displaySize;
+        }
+
+        public void setDisplaySize(int displaySize) {
+            this.displaySize = displaySize;
+        }
+
         @SerializedName("postId")
         @Expose
         private String postId;
@@ -289,6 +323,7 @@ public class Post {
         public void setIsLiked(boolean isLiked) {
             this.isLiked = isLiked;
         }
+
     }
 
 }

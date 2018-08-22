@@ -7,14 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.footprints.footprints.R;
 import com.footprints.footprints.adapter.MemoriesAdapter;
+import com.footprints.footprints.assymetric.model.ItemImage;
+import com.footprints.footprints.assymetric.model.ItemList;
 import com.footprints.footprints.controllers.VerticalNewsPaddingController;
 import com.footprints.footprints.models.Post;
 import com.footprints.footprints.rest.ApiClient;
@@ -39,8 +41,14 @@ public class NewsFeed extends Fragment {
     ProgressBar progressBar;
 
     Context context;
-    public static List<Post.Message> posts = new ArrayList<>();
-    public static MemoriesAdapter memoriesAdapter;
+    public  List<Post.Message> posts = new ArrayList<>();
+    public  MemoriesAdapter memoriesAdapter;
+
+
+    int currentOffset = 0;
+    ArrayList<ItemImage> Pathitems = new ArrayList<>();
+    private List<ItemList> mItemList = new ArrayList<>();
+    int lastItemPosition = 0;
 
     @Override
     public void onAttach(Context context) {
@@ -57,8 +65,9 @@ public class NewsFeed extends Fragment {
         recyclerView.addItemDecoration(new VerticalNewsPaddingController(3));
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
         recyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
-        memoriesAdapter = new MemoriesAdapter(posts, context);
+        memoriesAdapter = new MemoriesAdapter(posts, context, mItemList);
 
         progressBar = view.findViewById(R.id.newsfeedProgressBar);
 
@@ -73,10 +82,10 @@ public class NewsFeed extends Fragment {
 
 
                 if (pastVisibleItems + visibleItemCount == (totalItemCount)) {
-                   isFromStart=false;
+                    isFromStart = false;
                     progressBar.setVisibility(View.VISIBLE);
-                    offset = offset+limit;
-                    getTimelinePost(limit,offset);
+                    offset = offset + limit;
+                    getTimelinePost(limit, offset);
 
 
                 }
@@ -93,13 +102,13 @@ public class NewsFeed extends Fragment {
     public void onStart() {
         super.onStart();
         isFromStart = true;
-        offset=0;
+        offset = 0;
         getTimelinePost(limit, offset);
 
 
     }
 
-    private void getTimelinePost(int limit, int offset) {
+    private void getTimelinePost(final int limit, int offset) {
         PostInterface postInterface = ApiClient.getApiClient().create(PostInterface.class);
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         Map<String, String> params = new HashMap<String, String>();
@@ -115,15 +124,178 @@ public class NewsFeed extends Fragment {
                 if (response.body() != null) {
 
                     if (response.body().getMemories().getSuccess() == 1) {
+
+                        posts.addAll(response.body().getMemories().getMessage());
+                        lastItemPosition = posts.size();
+
+                       List<Post.Message> messages =  response.body().getMemories().getMessage();
+
+                        for (int i = 0; i < messages.size(); i++) {
+                            Pathitems.clear();
+
+                            if(!isFromStart){
+                                Log.d("CheckPostIdd",posts.get(i).getPostId()+" top "+i);
+                            //   posts.get(lastItemPosition+i-1).setMyInfo("hey "+i);
+                                posts.get(lastItemPosition-limit+i).setMyInfo("hey "+posts.get(lastItemPosition-limit+i).getPostId());
+                                posts.get(lastItemPosition-limit+i).setTotalImageSize(posts.get(lastItemPosition-limit+i).getImageurls().size());
+                            }else{
+                                Log.d("CheckPostIdd",posts.get(i).getPostId()+" Button");
+                                posts.get(i).setMyInfo("hey "+i);
+                                posts.get(i).setTotalImageSize(messages.get(i).getImageurls().size());
+                            }
+                            Log.d("CheckPostIdd",posts.size()+" "+i);
+                            if (messages.get(i).getHasMultipleImage().equals("1")) {
+
+
+                                ArrayList<ItemImage> mPathitems = new ArrayList<>();
+                                for (int j = 0; j < messages.get(i).getImageurls().size(); j++) {
+
+
+                                    boolean isCol2Avail = false;
+                                    String image = ApiClient.BASE_URL + "" + messages.get(i).getImageurls().get(j).getPath();
+                                    ItemImage i1 = new ItemImage(i + 1, image, image);
+
+
+                                    int totalImageSize = messages.get(i).getImageurls().size();
+                                    if (totalImageSize == 3 ||  totalImageSize == 5) {
+
+                                        if(!isFromStart){
+                                            posts.get(lastItemPosition-limit+i).setDisplaySize(3);
+                                        }else{
+                                            posts.get(i).setDisplaySize(3);
+                                        }
+
+                                        if (j == 0) {
+                                            i1.setRowSpan(2);
+                                            i1.setColumnSpan(2);
+
+                                        } else if (j == 1) {
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+
+                                        } else if (j == 2) {
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+
+                                        }
+                                    } else if (totalImageSize == 2 || totalImageSize == 1) {
+                                        if(!isFromStart){
+                                            posts.get(lastItemPosition-limit+i).setDisplaySize(4);
+                                        }else{
+                                            posts.get(i).setDisplaySize(4);
+                                        }
+                                        if (j == 0) {
+                                            i1.setRowSpan(2);
+                                            i1.setColumnSpan(3);
+
+                                        } else if (j == 1) {
+                                            i1.setRowSpan(2);
+                                            i1.setColumnSpan(3);
+
+                                        }
+                                    } else if(totalImageSize==4){
+
+                                        if(!isFromStart){
+                                            posts.get(lastItemPosition-limit+i).setDisplaySize(4);
+                                        }else{
+                                            posts.get(i).setDisplaySize(4);
+                                        }
+
+                                        if (j == 0) {
+                                            i1.setRowSpan(2);
+                                            i1.setColumnSpan(3);
+
+                                        } else if (j == 1) {
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+
+                                        } else if (j == 2) {
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+
+                                        }else{
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+                                        }
+
+                                    }else {
+                                        if(!isFromStart){
+                                            posts.get(lastItemPosition-limit+i).setDisplaySize(6);
+                                        }else{
+                                            posts.get(i).setDisplaySize(6);
+                                        }
+                                        if (j == 0) {
+                                            i1.setRowSpan(2);
+                                            i1.setColumnSpan(2);
+
+                                        } else if (j == 1) {
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+
+                                        } else if (j == 2) {
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+
+                                        } else if (j == 3) {
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+
+                                        } else if (j == 4) {
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+
+                                        } else if (j == 5) {
+                                            i1.setRowSpan(1);
+                                            i1.setColumnSpan(1);
+
+                                        }
+
+                                    }
+
+
+                                    i1.setPosition(currentOffset + j);
+
+
+                                    Pathitems.add(i1);
+
+
+                                }
+
+                                for (int k = 0; k < posts.get(i).getDisplaySize(); k++) {
+                                    if (k < Pathitems.size()) {
+                                        mPathitems.add(Pathitems.get(k));
+                                    }
+
+                                }
+
+
+                                ItemList itemList = new ItemList(i, "User " + (i + 1), mPathitems);
+                                mItemList.add(itemList);
+                                currentOffset += mPathitems.size();
+                            } else {
+                                ArrayList<ItemImage> mPathitems = new ArrayList<>();
+                                ItemList itemList = new ItemList(i, "User " + (i + 1), mPathitems);
+                                if(!isFromStart){
+                                    posts.get(lastItemPosition-limit+i).setDisplaySize(0);
+                                }else{
+                                    posts.get(i).setDisplaySize(0);
+                                }
+                                mItemList.add(itemList);
+                            }
+
+                            Log.d("ChckBing1"," NewsFeed MTotal :"+posts.get(i).getTotalImageSize()+" mDisplay :"+posts.get(i).getDisplaySize());
+                        }
                         if (isFromStart) {
-                            posts.addAll(response.body().getMemories().getMessage());
+
                             recyclerView.setAdapter(memoriesAdapter);
                         } else {
-                            if(progressBar!=null){
+                            if (progressBar != null) {
                                 progressBar.setVisibility(View.GONE);
                             }
-                            posts.addAll(response.body().getMemories().getMessage());
-                            memoriesAdapter.notifyDataSetChanged();
+                           /* for(int i = lastItemPosition;i<limit;i++){
+                                memoriesAdapter.notifyItemChanged(i);
+                            }*/
+                            memoriesAdapter.notifyItemRangeInserted(lastItemPosition,limit);
                         }
 
                     }
@@ -132,7 +304,7 @@ public class NewsFeed extends Fragment {
 
             @Override
             public void onFailure(Call<Post> call, Throwable t) {
-                Toast.makeText(context, "Posts Retrival Failed... Please Retry !", Toast.LENGTH_LONG).show();
+                //  Toast.makeText(context, "Posts Retrival Failed"+t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

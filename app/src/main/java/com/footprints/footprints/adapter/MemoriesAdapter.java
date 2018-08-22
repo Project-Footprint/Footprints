@@ -26,6 +26,12 @@ import com.footprints.footprints.R;
 import com.footprints.footprints.activities.FullPostActivity;
 import com.footprints.footprints.activities.PlaceActivity;
 import com.footprints.footprints.activities.ProfileActivity;
+import com.footprints.footprints.assymetric.AsymmetricRecyclerView;
+import com.footprints.footprints.assymetric.AsymmetricRecyclerViewAdapter;
+import com.footprints.footprints.assymetric.Utils;
+import com.footprints.footprints.assymetric.adapter.ChildAdapter;
+import com.footprints.footprints.assymetric.controller.SpacesItemDecoration;
+import com.footprints.footprints.assymetric.model.ItemList;
 import com.footprints.footprints.controllers.AgoDateParse;
 import com.footprints.footprints.controllers.ControllerPixels;
 import com.footprints.footprints.controllers.NetworkDetectController;
@@ -53,31 +59,42 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
     List<Post.Message> posts = new ArrayList<>();
     Activity context;
 
-    public MemoriesAdapter(List<Post.Message> posts, Context context) {
+
+    private List<ItemList> mItemList;
+
+    public MemoriesAdapter(List<Post.Message> posts, Context context, List<ItemList> moviesList) {
         this.posts = posts;
         this.context = (Activity) context;
+        this.mItemList = moviesList;
+
     }
+
+
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_memory, parent, false);
+        // ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
         return new MemoriesAdapter.ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        final Post.Message message = posts.get(position);
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
 
+        final Post.Message message = posts.get(holder.getAdapterPosition());
 
+       // Log.d("checkMyInfro", message.getMyInfo());
+        Log.d("ChckBing2", "Message  MTotal :" + message.getTotalImageSize() + " mDisplay :" + message.getDisplaySize());
+        Log.d("ChckBing", message.getPostId());
 
-        if(message.getPost()!=null && !message.getPost().equals("") && message.getPost().length()>1){
+        if (message.getPost() != null && !message.getPost().equals("") && message.getPost().length() > 1) {
             holder.memoryStatus.setText(message.getPost());
-        }else{
+        } else {
             holder.memoryStatus.setVisibility(View.GONE);
         }
         holder.personName.setText(message.getName());
-        if(message.getPlaceName()!=null){
+        if (message.getPlaceName() != null) {
             holder.memory_place_name.setVisibility(View.VISIBLE);
             holder.memory_place_name_at.setVisibility(View.VISIBLE);
             holder.memory_place_name.setText(message.getPlaceName());
@@ -168,12 +185,11 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                                         Intent intent = new Intent(context, FullPostActivity.class);
                                         Bundle args = new Bundle();
                                         args.putParcelable("postModel", Parcels.wrap(message));
-                                        args.putBoolean("fromNetwork",false);
-                                        intent.putExtra("postBundel",args);
+                                        args.putBoolean("fromNetwork", false);
+                                        intent.putExtra("postBundel", args);
                                         context.startActivity(intent);
                                     }
                                 });
-
 
 
                         holder.sliderLayout.addSlider(defaultSliderView);
@@ -181,15 +197,20 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                     }
 
 
-
                     holder.sliderLayout.setPresetTransformer(SliderLayout.Transformer.Stack);
                     holder.sliderLayout.setPresetIndicator(SliderLayout.PresetIndicators.Right_Top);
                     holder.sliderLayout.setDuration(4000);
 
 
-                    holder.sliderLayout.setVisibility(View.VISIBLE);
+                    // holder.sliderLayout.setVisibility(View.VISIBLE);
                     holder.sliderLayout.stopAutoCycle();
                     holder.memoryImage.setVisibility(View.GONE);
+
+
+                    ItemList item = mItemList.get(position);
+                    Log.d("ChckBing3", "Calling  MTotal :" + message.getTotalImageSize() + " mDisplay :" + message.getDisplaySize());
+                    ChildAdapter adapter = new ChildAdapter(item.getImages(), message.getDisplaySize(), message.getTotalImageSize(), context);
+                    holder.assyrecyclerView.setAdapter(new AsymmetricRecyclerViewAdapter<>(context, holder.assyrecyclerView, adapter));
 
                 } else {
                     ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.memoryStatus.getLayoutParams();
@@ -221,9 +242,9 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                 Intent intent = new Intent(context, ProfileActivity.class);
                 intent.putExtra("uid", message.getPostUserId());
 
-                ProfilePostsFragment.isClearNeeded=false;
+                ProfilePostsFragment.isClearNeeded = false;
                 ProfilePostsFragment.posts.clear();
-                if(ProfilePostsFragment.memoriesAdapter!=null){
+                if (ProfilePostsFragment.memoriesAdapter != null) {
                     ProfilePostsFragment.memoriesAdapter.notifyDataSetChanged();
                 }
 
@@ -258,8 +279,8 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                     holder.likeImage.setImageResource(R.drawable.icon_like_selected);
                     int count = Integer.parseInt(message.getLikeCount());
                     count++;
-                    posts.get(position).setLikeCount(count + "");
-                    posts.get(position).setIsLiked(true);
+                    posts.get(holder.getAdapterPosition()).setLikeCount(count + "");
+                    posts.get(holder.getAdapterPosition()).setIsLiked(true);
                     if (count == 1) {
                         holder.likeTxt.setText(count + " Like");
                     } else {
@@ -281,9 +302,9 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                                 } else {
                                     holder.likeTxt.setText(count + " Likes");
                                 }
-                                posts.get(position).setLikeCount(count + "");
+                                posts.get(holder.getAdapterPosition()).setLikeCount(count + "");
                                 Toast.makeText(context, "Something Went Wrong.. Please Retry !", Toast.LENGTH_LONG).show();
-                                posts.get(position).setIsLiked(false);
+                                posts.get(holder.getAdapterPosition()).setIsLiked(false);
                             }
 
                             holder.likeSection.setEnabled(true);
@@ -300,8 +321,8 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                             } else {
                                 holder.likeTxt.setText(count + " Likes");
                             }
-                            posts.get(position).setLikeCount(count + "");
-                            posts.get(position).setIsLiked(false);
+                            posts.get(holder.getAdapterPosition()).setLikeCount(count + "");
+                            posts.get(holder.getAdapterPosition()).setIsLiked(false);
                             Toast.makeText(context, "Something Went Wrong.. Please Retry !", Toast.LENGTH_LONG).show();
                         }
                     });
@@ -315,8 +336,8 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                         return;
                     }
                     holder.likeImage.setImageResource(R.drawable.icon_like);
-                    posts.get(position).setLikeCount(count + "");
-                    posts.get(position).setIsLiked(false);
+                    posts.get(holder.getAdapterPosition()).setLikeCount(count + "");
+                    posts.get(holder.getAdapterPosition()).setIsLiked(false);
 
                     if (count == 0 || count == 1) {
                         holder.likeTxt.setText(count + " Like");
@@ -340,9 +361,9 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                                     holder.likeTxt.setText(count + " Likes");
                                 }
 
-                                posts.get(position).setLikeCount(count + "");
+                                posts.get(holder.getAdapterPosition()).setLikeCount(count + "");
                                 Toast.makeText(context, "Something Went Wrong.. Please Retry !", Toast.LENGTH_LONG).show();
-                                posts.get(position).setIsLiked(true);
+                                posts.get(holder.getAdapterPosition()).setIsLiked(true);
                             }
 
                             holder.likeSection.setEnabled(true);
@@ -359,8 +380,8 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                             } else {
                                 holder.likeTxt.setText(count + " Likes");
                             }
-                            posts.get(position).setLikeCount(count + "");
-                            posts.get(position).setIsLiked(true);
+                            posts.get(holder.getAdapterPosition()).setLikeCount(count + "");
+                            posts.get(holder.getAdapterPosition()).setIsLiked(true);
                             Toast.makeText(context, "Something Went Wrong.. Please Retry !", Toast.LENGTH_LONG).show();
                         }
                     });
@@ -374,7 +395,7 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                 BottomSheetDialogFragment bottomSheetDialogFragment = new BottomSheetComment();
                 Bundle args = new Bundle();
                 args.putParcelable("postModel", Parcels.wrap(message));
-                args.putInt("position",position);
+                args.putInt("position", holder.getAdapterPosition());
                 bottomSheetDialogFragment.setArguments(args);
                 FragmentActivity fragmentActivity = (FragmentActivity) context;
                 bottomSheetDialogFragment.show(fragmentActivity.getSupportFragmentManager(), "commentFrag");
@@ -386,8 +407,8 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                 Intent intent = new Intent(context, FullPostActivity.class);
                 Bundle args = new Bundle();
                 args.putParcelable("postModel", Parcels.wrap(message));
-                args.putBoolean("fromNetwork",false);
-                intent.putExtra("postBundel",args);
+                args.putBoolean("fromNetwork", false);
+                intent.putExtra("postBundel", args);
                 context.startActivity(intent);
             }
         });
@@ -413,23 +434,24 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
 
         View holder;
         ImageView memoryImage, personImage, likeImage, commentImage, privacy_icon;
-        TextView personName, memoryDate, memoryStatus,memory_place_name,memory_place_name_at;
+        TextView personName, memoryDate, memoryStatus, memory_place_name, memory_place_name_at;
         SliderLayout sliderLayout;
         LinearLayout likeSection, commentSection;
         TextView likeTxt, commentTxt;
 
+        public AsymmetricRecyclerView assyrecyclerView;
 
         ViewHolder(View itemView) {
             super(itemView);
             holder = itemView;
-          //  ( (CardView) holder).setPreventCornerOverlap(false);
+            //  ( (CardView) holder).setPreventCornerOverlap(false);
 
 
           /*  ( (CardView) holder).setPadding(0,0,0,0);
             ( (CardView) holder).setUseCompatPadding(true);
             ( (CardView) holder).setContentPadding(0,0,0,0);*/
 
-           // ( (CardView) holder).setUseCompatPadding(false);
+            // ( (CardView) holder).setUseCompatPadding(false);
 
             memoryImage = holder.findViewById(R.id.memory_image);
             personName = holder.findViewById(R.id.memory_people_name);
@@ -450,9 +472,16 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
             commentTxt = holder.findViewById(R.id.comment_txt);
             commentImage = holder.findViewById(R.id.comment_img);
 
+
+            assyrecyclerView = (AsymmetricRecyclerView) holder.findViewById(R.id.assyrecyclerView);
+            assyrecyclerView.setRequestedColumnCount(3);
+            assyrecyclerView.setDebugging(true);
+            //  assyrecyclerView.getRecycledViewPool().setMaxRecycledViews(0, 0);
+            assyrecyclerView.setRequestedHorizontalSpacing(Utils.dpToPx(context, 3));
+            assyrecyclerView.addItemDecoration(new SpacesItemDecoration(3));
+
         }
     }
-
 
 
 }

@@ -122,7 +122,7 @@ public class UploadMemories extends AppCompatActivity {
                 if (position == 0) {
                     ImagePicker.create(UploadMemories.this)
                             .folderMode(true)
-                            .limit(5)
+                            .limit(10)
                             .start(); // start image picker activity with request code
                 }
             }
